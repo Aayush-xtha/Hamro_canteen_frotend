@@ -1,0 +1,71 @@
+name: folder_structure
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.4
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+  get: ^4.6.6
+  bottom_navy_bar: ^6.1.0
+  flutter_svg: ^2.0.17
+  image_picker: ^1.1.2
+  simple_fontellico_progress_dialog: ^0.3.0
+  http: ^1.2.2
+  get_storage: ^2.1.1
+  khalti_flutter: ^3.0.0
+  cached_network_image: ^3.4.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  esewa_flutter_sdk:
+    path: ./esewa_flutter_sdk
+
+  flutter_lints: ^4.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+
+ 
+  fonts:
+    - family: PTSans
+      fonts:
+        - asset: assets/fonts/PTSans-Italic.ttf
+          weight: 300
+        - asset: assets/fonts/PTSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/PTSans-Bold.ttf
+          weight: 500
+        - asset: assets/fonts/PTSans-BoldItalic.ttf
+          weight: 600
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package
