@@ -1,27 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:folder_structure/controller/core_controller.dart';
-import 'package:folder_structure/model/user.dart';
+import 'package:folder_structure/controller/dashboard/edit_profile_controller.dart';
 import 'package:folder_structure/utils/color.dart';
+import 'package:folder_structure/utils/custom_text_styles.dart';
 import 'package:get/get.dart';
 
 class EditProfileScreen extends StatelessWidget {
-  final Users user;
-  final coreController = Get.find<CoreController>();
-
-  EditProfileScreen({super.key, required this.user});
-
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-
+  EditProfileScreen({super.key});
+  final c = Get.put(EditProfileController());
   @override
   Widget build(BuildContext context) {
-    firstNameController.text = user.firstName ?? "";
-    lastNameController.text = user.lastName ?? "";
-    phoneController.text = user.phoneNumber ?? "";
-    emailController.text = user.email ?? "";
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit Profile"),
@@ -30,98 +18,127 @@ class EditProfileScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Profile Picture
-            Center(
-              child: CircleAvatar(
-                radius: 55,
-                backgroundColor: Colors.deepPurple.shade100,
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: user.image != null && user.image!.isNotEmpty
-                      ? NetworkImage(user.image!)
-                      : const AssetImage("assets/images/default_user.png")
-                          as ImageProvider,
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Form Fields in a Card
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              elevation: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    CustomTextField(
-                      controller: firstNameController,
-                      label: "First Name",
-                      icon: Icons.person,
-                    ),
-                    CustomTextField(
-                      controller: lastNameController,
-                      label: "Last Name",
-                      icon: Icons.person_outline,
-                    ),
-                    CustomTextField(
-                      controller: phoneController,
-                      label: "Phone Number",
-                      icon: Icons.phone,
-                      keyboardType: TextInputType.phone,
-                    ),
-                    CustomTextField(
-                      controller: emailController,
-                      label: "Email",
-                      icon: Icons.email,
-                      readOnly: true,
-                      backgroundColor: Colors.grey.shade200,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Save Changes Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // Update user info
-                  coreController.currentUser.value = Users(
-                    id: user.id,
-                    firstName: firstNameController.text,
-                    lastName: lastNameController.text,
-                    email: user.email,
-                    phoneNumber: phoneController.text,
-                    gender: user.gender,
-                    role: user.role,
-                    branchId: user.branchId,
-                    branchName: user.branchName,
-                    image: user.image,
-                    token: user.token,
-                  );
-
-                  Get.back(); // Go back to ProfileScreen
+        child: Form(
+          key: c.formKey,
+          child: Column(
+            children: [
+              Obx(() => ClipRRect(
+                    borderRadius: BorderRadius.circular(60),
+                    child: (c.image.value != null)
+                        ? Image.file(
+                            c.image.value!,
+                            fit: BoxFit.cover,
+                            height: 100,
+                            width: 100,
+                          )
+                        : CachedNetworkImage(
+                            placeholder: (context, url) => const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator()),
+                            fit: BoxFit.cover,
+                            height: 100,
+                            width: 100,
+                            imageUrl: c.avatarUrl.value!,
+                            errorWidget: (context, url, error) => Image.asset(
+                              "assets/images/blank_profile.jpg",
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                  )),
+              const SizedBox(height: 10),
+              InkWell(
+                onTap: () {
+                  c.pickImage();
                 },
-                icon: const Icon(Icons.save, color: AppColors.whiteColor),
-                label: const Text("Save Changes",
-                    style: TextStyle(color: AppColors.whiteColor)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                child: Text(
+                  "Change Avatar",
+                  style:
+                      CustomTextStyles.f14W400(color: AppColors.primaryColor),
+                ),
+              ),
+
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                elevation: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      CustomTextField(
+                        controller: c.firstNameController,
+                        label: "First Name",
+                        icon: Icons.person,
+                      ),
+                      CustomTextField(
+                        controller: c.lastNameController,
+                        label: "Last Name",
+                        icon: Icons.person_outline,
+                      ),
+                      CustomTextField(
+                        controller: c.phoneController,
+                        label: "Phone Number",
+                        icon: Icons.phone,
+                        keyboardType: TextInputType.phone,
+                      ),
+                      CustomTextField(
+                        controller: c.emailController,
+                        label: "Email",
+                        icon: Icons.email,
+                        readOnly: true,
+                        backgroundColor: Colors.grey.shade200,
+                      ),
+                      CustomTextField(
+                        controller: c.genderController,
+                        label: "Gender",
+                        icon: Icons.person,
+                        backgroundColor: Colors.grey.shade200,
+                      ),
+                      CustomTextField(
+                        controller: c.roleController,
+                        label: "Role",
+                        icon: Icons.post_add,
+                        readOnly: true,
+                        backgroundColor: Colors.grey.shade200,
+                      ),
+                      CustomTextField(
+                        controller: c.branchNameController,
+                        label: "Branch Name",
+                        icon: Icons.house,
+                        readOnly: true,
+                        backgroundColor: Colors.grey.shade200,
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+
+              // Save Changes Button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    c.onSubmit();
+                  },
+                  icon: const Icon(Icons.save, color: AppColors.whiteColor),
+                  label: const Text("Save Changes",
+                      style: TextStyle(color: AppColors.whiteColor)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -162,15 +179,15 @@ class CustomTextField extends StatelessWidget {
           prefixIcon: Icon(icon, color: AppColors.primaryColor),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.primaryColor),
+            borderSide: const BorderSide(color: AppColors.primaryColor),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.primaryColor),
+            borderSide: const BorderSide(color: AppColors.primaryColor),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.primaryColor),
+            borderSide: const BorderSide(color: AppColors.primaryColor),
           ),
         ),
       ),

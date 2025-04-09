@@ -32,7 +32,7 @@ class RegisterUserRepo {
         "password": password,
         "confirm_password": confirmPassword,
       };
-      http.Response response = await HttpRequest.post(
+      http.Response response = await HttpRequestHamroCanteen.post(
           Uri.parse(Api.registerUrl),
           headers: headers,
           body: body);

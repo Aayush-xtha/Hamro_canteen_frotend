@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:http/http.dart' as http;
 
-class HttpRequest {
+class HttpRequestHamroCanteen {
   static Future<http.Response> post(Uri url,
       {Map<String, String>? headers, Object? body}) async {
     try {

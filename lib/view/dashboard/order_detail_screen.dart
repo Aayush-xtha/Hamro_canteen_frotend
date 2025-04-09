@@ -84,7 +84,7 @@ class OrderDetailScreen extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 5),
-                        Text("\$${foods.price}",
+                        Text("\RS ${foods.price}",
                             style:
                                 CustomTextStyles.f14W400(color: Colors.green)),
                       ],
@@ -136,7 +136,7 @@ class OrderDetailScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text("Rate", style: CustomTextStyles.f14W400()),
-                      Text("\$${foods.price}",
+                      Text("\RS ${foods.price}",
                           style: CustomTextStyles.f14W600()),
                     ],
                   ),

@@ -52,4 +52,24 @@ class MenuListController extends GetxController {
           CustomSnackBar.error(message: message, title: "Order Error");
         });
   }
+
+  //  addToCart(String foodId, String userId, String paymentMethod, String quantity,
+  //     String rate) async {
+  //   loadings.value = true;
+  //   await AddOrderRepo.orderRepo(
+      
+  //       userid: userId,
+  //       foodItems: [
+  //         {"food_id": foodId, "quantity": quantity, "rate": rate}
+  //       ],
+  //       paymentMethod: paymentMethod,
+  //       onSuccess: () {
+  //         CustomSnackBar.success(
+  //             title: "Order Successful", message: "Order placed successfully");
+  //       },
+  //       onError: (message) {
+  //         loadings.value = false;
+  //         CustomSnackBar.error(message: message, title: "Order Error");
+  //       });
+  // }
 }
