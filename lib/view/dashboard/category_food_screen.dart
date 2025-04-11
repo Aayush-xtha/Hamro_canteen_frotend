@@ -18,7 +18,7 @@ class CategoryFoodScreen extends StatelessWidget {
   });
 
   final homeController = Get.find<HomeScreenController>();
-  final cartController = Get.find<CartController>();
+  final cartController = Get.find<AddToCartController>();
 
   @override
   Widget build(BuildContext context) {
@@ -183,63 +183,63 @@ class CategoryFoodScreen extends StatelessWidget {
                           ),
                           GestureDetector(
                             onTap: () {
-                              // Add to cart
-                              final foodId =
-                                  int.tryParse(food.foodId ?? "0") ?? 0;
+                              // // Add to cart
+                              // final foodId =
+                              //     int.tryParse(food.foodId ?? "0") ?? 0;
 
-                              // Show loading indicator
-                              final loadingOverlay = Get.dialog(
-                                const Center(
-                                  child: CircularProgressIndicator(
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        AppColors.primaryColor),
-                                  ),
-                                ),
-                                barrierDismissible: false,
-                              );
+                              // // Show loading indicator
+                              // final loadingOverlay = Get.dialog(
+                              //   const Center(
+                              //     child: CircularProgressIndicator(
+                              //       valueColor: AlwaysStoppedAnimation<Color>(
+                              //           AppColors.primaryColor),
+                              //     ),
+                              //   ),
+                              //   barrierDismissible: false,
+                              // );
 
-                              cartController.addToCart(
-                                foodId: foodId,
-                                quantity: 1,
-                                onSuccess: (message) {
-                                  // Close loading indicator
-                                  Get.back();
+                              // cartController.addToCart(
+                              //   foodId: foodId,
+                              //   quantity: 1,
+                              //   onSuccess: (message) {
+                              //     // Close loading indicator
+                              //     Get.back();
 
-                                  // Show success message
-                                  Get.snackbar(
-                                    "Added to Cart",
-                                    message,
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    backgroundColor: Colors.green,
-                                    colorText: Colors.white,
-                                    duration: const Duration(seconds: 2),
-                                    animationDuration:
-                                        const Duration(milliseconds: 500),
-                                    isDismissible: true,
-                                    margin: const EdgeInsets.all(8),
-                                    icon: const Icon(Icons.check_circle,
-                                        color: Colors.white),
-                                  );
-                                },
-                                onError: (message) {
-                                  // Close loading indicator
-                                  Get.back();
+                              //     // Show success message
+                              //     Get.snackbar(
+                              //       "Added to Cart",
+                              //       message,
+                              //       snackPosition: SnackPosition.BOTTOM,
+                              //       backgroundColor: Colors.green,
+                              //       colorText: Colors.white,
+                              //       duration: const Duration(seconds: 2),
+                              //       animationDuration:
+                              //           const Duration(milliseconds: 500),
+                              //       isDismissible: true,
+                              //       margin: const EdgeInsets.all(8),
+                              //       icon: const Icon(Icons.check_circle,
+                              //           color: Colors.white),
+                              //     );
+                              //   },
+                              //   onError: (message) {
+                              //     // Close loading indicator
+                              //     Get.back();
 
-                                  // Show error message
-                                  Get.snackbar(
-                                    "Error",
-                                    message,
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    backgroundColor: Colors.red,
-                                    colorText: Colors.white,
-                                    duration: const Duration(seconds: 3),
-                                    isDismissible: true,
-                                    margin: const EdgeInsets.all(8),
-                                    icon: const Icon(Icons.error_outline,
-                                        color: Colors.white),
-                                  );
-                                },
-                              );
+                              //     // Show error message
+                              //     Get.snackbar(
+                              //       "Error",
+                              //       message,
+                              //       snackPosition: SnackPosition.BOTTOM,
+                              //       backgroundColor: Colors.red,
+                              //       colorText: Colors.white,
+                              //       duration: const Duration(seconds: 3),
+                              //       isDismissible: true,
+                              //       margin: const EdgeInsets.all(8),
+                              //       icon: const Icon(Icons.error_outline,
+                              //           color: Colors.white),
+                              //     );
+                              //   },
+                              // );
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(

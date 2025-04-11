@@ -1,13 +1,17 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:folder_structure/controller/dashboard/add_to_cart_controller.dart';
+import 'package:folder_structure/controller/dashboard/cart_controller.dart';
+import 'package:folder_structure/controller/dashboard/menu_list_controller.dart';
+import 'package:folder_structure/model/cart_item.dart';
 import 'package:folder_structure/utils/color.dart';
 import 'package:folder_structure/view/dashboard/menu_list.dart';
 import 'package:get/get.dart';
 
 class AddToCartPage extends StatelessWidget {
-  AddToCartPage({Key? key}) : super(key: key);
+  AddToCartPage({super.key});
 
   final AddToCartController controller = Get.put(AddToCartController());
+  final orderController = Get.put(MenuListController());
 
   @override
   Widget build(BuildContext context) {
@@ -23,20 +27,21 @@ class AddToCartPage extends StatelessWidget {
                   Expanded(
                     child: ListView.builder(
                       padding: const EdgeInsets.all(15),
-                      itemCount: controller.cartItems.length,
+                      itemCount: controller.allCartItems.length,
                       itemBuilder: (context, index) {
-                        final item = controller.cartItems[index];
+                        final item = controller.allCartItems[index];
                         return Obx(() => CartItemCard(
                               item: item,
-                              isSelected:
-                                  controller.selectedItems.contains(item.id),
-                              onToggleSelection: () =>
-                                  controller.toggleSelection(item.id),
-                              onIncreaseQuantity: () =>
-                                  controller.increaseQuantity(item.id),
-                              onDecreaseQuantity: () =>
-                                  controller.decreaseQuantity(item.id),
-                              onRemove: () => controller.removeItem(item.id),
+                              isSelected: controller.selectedItems
+                                  .contains(item.cartId),
+                              onToggleSelection: () => controller
+                                  .toggleSelection(item.cartId.toString()),
+                              onIncreaseQuantity: () => controller
+                                  .increaseQuantity(item.cartId.toString()),
+                              onDecreaseQuantity: () => controller
+                                  .decreaseQuantity(item.cartId.toString()),
+                              onRemove: () =>
+                                  controller.removeItem(item.cartId.toString()),
                             ));
                       },
                     ),
@@ -154,8 +159,8 @@ class AddToCartPage extends StatelessWidget {
             children: [
               Checkbox(
                 value: controller.selectedItems.length ==
-                        controller.cartItems.length &&
-                    controller.cartItems.isNotEmpty,
+                        controller.allCartItems.length &&
+                    controller.allCartItems.isNotEmpty,
                 onChanged: (_) => controller.toggleSelectAll(),
                 activeColor: AppColors.primaryColor,
                 shape: RoundedRectangleBorder(
@@ -176,7 +181,7 @@ class AddToCartPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  "${controller.selectedItems.length}/${controller.cartItems.length}",
+                  "${controller.selectedItems.length}/${controller.allCartItems.length}",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: AppColors.primaryColor,
@@ -304,7 +309,7 @@ class AddToCartPage extends StatelessWidget {
               ),
               onPressed: canCheckout
                   ? () {
-                      // Proceed to checkout with selected items
+                      // orderController.addOrders(, userId, paymentMethod, quantity, rate)
                     }
                   : null,
               child: Row(
@@ -332,7 +337,7 @@ class AddToCartPage extends StatelessWidget {
 }
 
 class CartItemCard extends StatelessWidget {
-  final CartItem item;
+  final CartItems item;
   final bool isSelected;
   final VoidCallback onToggleSelection;
   final VoidCallback onIncreaseQuantity;
@@ -340,14 +345,14 @@ class CartItemCard extends StatelessWidget {
   final VoidCallback onRemove;
 
   const CartItemCard({
-    Key? key,
+    super.key,
     required this.item,
     required this.isSelected,
     required this.onToggleSelection,
     required this.onIncreaseQuantity,
     required this.onDecreaseQuantity,
     required this.onRemove,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -388,23 +393,17 @@ class CartItemCard extends StatelessWidget {
                     // Food image
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        width: 100,
+                      child: CachedNetworkImage(
+                        placeholder: (context, url) =>
+                            const CircularProgressIndicator(),
+                        fit: BoxFit.cover,
                         height: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: item.image.isNotEmpty
-                            ? Image.network(
-                                item.image,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.fastfood,
-                                        size: 40, color: Colors.orange),
-                              )
-                            : const Icon(Icons.fastfood,
-                                size: 40, color: Colors.orange),
+                        width: 100,
+                        imageUrl: item.foodImage ?? "",
+                        errorWidget: (context, url, error) => Container(
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.fastfood,
+                                size: 40, color: Colors.orange)),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -414,106 +413,115 @@ class CartItemCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item.name,
+                            item.foodName ?? "",
                             style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            item.description,
+                            item.description ?? "",
                             style: TextStyle(
                                 color: Colors.grey[600], fontSize: 14),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Price
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "₹${item.price.toStringAsFixed(2)}",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.primaryColor,
-                                    ),
-                                  ),
-                                  Obx(
-                                    () => item.quantity.value > 1
-                                        ? Text(
-                                            "Total: ₹${(item.price * item.quantity.value).toStringAsFixed(2)}",
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          )
-                                        : const SizedBox.shrink(),
-                                  ),
-                                ],
-                              ),
-                              // Quantity controls
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[100],
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Colors.grey[300]!,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Material(
-                                      color: Colors.transparent,
-                                      child: InkWell(
-                                        onTap: onDecreaseQuantity,
-                                        borderRadius: BorderRadius.circular(20),
-                                        child: Obx(() => Container(
-                                              padding: const EdgeInsets.all(6),
-                                              child: Icon(
-                                                Icons.remove,
-                                                color: item.quantity.value > 1
-                                                    ? AppColors.primaryColor
-                                                    : Colors.grey,
-                                                size: 20,
-                                              ),
-                                            )),
-                                      ),
-                                    ),
-                                    Obx(() => Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8),
-                                          child: Text(
-                                            "${item.quantity.value}",
-                                            style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        )),
-                                    Material(
-                                      color: Colors.transparent,
-                                      child: InkWell(
-                                        onTap: onIncreaseQuantity,
-                                        borderRadius: BorderRadius.circular(20),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(6),
-                                          child: Icon(
-                                            Icons.add,
-                                            color: AppColors.primaryColor,
-                                            size: 20,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: [
+                          //     // Price
+                          //     Column(
+                          //       crossAxisAlignment: CrossAxisAlignment.start,
+                          //       children: [
+                          //         Text(
+                          //           "₹${item.unitPrice}",
+                          //           style: TextStyle(
+                          //             fontSize: 18,
+                          //             fontWeight: FontWeight.bold,
+                          //             color: AppColors.primaryColor,
+                          //           ),
+                          //         ),
+                          //         Obx(
+                          //           () {
+                          //             final qty =
+                          //                 int.tryParse(item.quantity ?? '0') ??
+                          //                     0; // Parse quantity
+                          //             final price = item.unitPrice ??
+                          //                 0.0; // Safe price default
+
+                          //             return qty > 1
+                          //                 ? Text(
+                          //                     "Total: ₹${(price * qty).toStringAsFixed(2)}", // Calculate total price
+                          //                     style: const TextStyle(
+                          //                       fontSize: 14,
+                          //                       fontWeight: FontWeight.w500,
+                          //                     ),
+                          //                   )
+                          //                 : const SizedBox
+                          //                     .shrink(); // Hide if qty <= 1
+                          //           },
+                          //         ),
+                          //       ],
+                          //     ),
+                          //     // Quantity controls
+                          //     Container(
+                          //       decoration: BoxDecoration(
+                          //         color: Colors.grey[100],
+                          //         borderRadius: BorderRadius.circular(20),
+                          //         border: Border.all(
+                          //           color: Colors.grey[300]!,
+                          //           width: 1,
+                          //         ),
+                          //       ),
+                          //       child: Row(
+                          //         children: [
+                          //           Material(
+                          //             color: Colors.transparent,
+                          //             child: InkWell(
+                          //               onTap: onDecreaseQuantity,
+                          //               borderRadius: BorderRadius.circular(20),
+                          //               child: Obx(() => Container(
+                          //                     padding: const EdgeInsets.all(6),
+                          //                     child: Icon(
+                          //                       Icons.remove,
+                          //                       color: item.quantity.value > 1
+                          //                           ? AppColors.primaryColor
+                          //                           : Colors.grey,
+                          //                       size: 20,
+                          //                     ),
+                          //                   )),
+                          //             ),
+                          //           ),
+                          //           Obx(() => Container(
+                          //                 padding: const EdgeInsets.symmetric(
+                          //                     horizontal: 8),
+                          //                 child: Text(
+                          //                   "${item.quantity.value}",
+                          //                   style: const TextStyle(
+                          //                       fontSize: 16,
+                          //                       fontWeight: FontWeight.bold),
+                          //                 ),
+                          //               )),
+                          //           Material(
+                          //             color: Colors.transparent,
+                          //             child: InkWell(
+                          //               onTap: onIncreaseQuantity,
+                          //               borderRadius: BorderRadius.circular(20),
+                          //               child: Container(
+                          //                 padding: const EdgeInsets.all(6),
+                          //                 child: Icon(
+                          //                   Icons.add,
+                          //                   color: AppColors.primaryColor,
+                          //                   size: 20,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
                         ],
                       ),
                     ),

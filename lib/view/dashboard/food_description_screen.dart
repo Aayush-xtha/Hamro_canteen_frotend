@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:folder_structure/controller/auth/login_screen_controller.dart';
 import 'package:folder_structure/controller/dashboard/cart_controller.dart';
 import 'package:folder_structure/model/food_detail.dart';
 import 'package:folder_structure/utils/color.dart';
-import 'package:folder_structure/utils/custom_snackbar.dart';
 import 'package:folder_structure/view/dashboard/order_detail_screen.dart';
 import 'package:get/get.dart';
 
 class FoodDescriptionScreen extends StatelessWidget {
   final Foods food;
-  final c = Get.put(CartController());
+  final c = Get.put(AddToCartController());
 
   FoodDescriptionScreen({super.key, required this.food});
 
@@ -288,25 +286,7 @@ class FoodDescriptionScreen extends StatelessWidget {
                     size: 24,
                   ),
                   onPressed: () async {
-                    // Get logged in user ID (assuming you have this stored somewhere)
-                    // final loggedInUserId = Get.find<LoginScreenController>().; // You'll need to implement this
-
-                    // Use the current food item's ID
-                    final foodId = food.foodId;
-
-                    // Default quantity for add to cart from the main screen
-                    final quantity = 1;
-
-                    // Get the branch ID (assuming it's available from the food object)
-                    // final branchId = food.; // Make sure this property exists in your Foods model
-
-                    // Call the addToCart method
-                    // c.addToCart(
-                    //   // userId: loggedInUserId,
-                    //   foodId: foodId.toString().value,
-                    //   quantity: quantity,
-                    //   // branchId: branchId,
-                    // );
+                    c.showAddToCart(context, food);
                   }),
             ),
           ],

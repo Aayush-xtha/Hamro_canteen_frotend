@@ -37,13 +37,16 @@ class Foods {
   String? price;
   String? description;
   String? foodImage;
+  String? branchId;
 
-  Foods(
-      {this.foodId,
-      this.foodName,
-      this.price,
-      this.description,
-      this.foodImage});
+  Foods({
+    this.foodId,
+    this.foodName,
+    this.price,
+    this.description,
+    this.foodImage,
+    this.branchId,
+  });
 
   Foods.fromJson(Map<String, dynamic> json) {
     foodId = json['food_id'];
@@ -51,6 +54,7 @@ class Foods {
     price = json['price'];
     description = json['description'];
     foodImage = json['food_image'];
+    branchId = json['branch_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -60,6 +64,7 @@ class Foods {
     data['price'] = price;
     data['description'] = description;
     data['food_image'] = foodImage;
+    data['branch_id'] = branchId;
     return data;
   }
 }
