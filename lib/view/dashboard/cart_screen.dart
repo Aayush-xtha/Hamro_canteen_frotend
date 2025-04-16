@@ -1,17 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:folder_structure/controller/dashboard/cart_controller.dart';
-import 'package:folder_structure/controller/dashboard/menu_list_controller.dart';
 import 'package:folder_structure/model/cart_item.dart';
 import 'package:folder_structure/utils/color.dart';
 import 'package:folder_structure/view/dashboard/menu_list.dart';
+import 'package:folder_structure/view/dashboard/order_detail_screen.dart';
 import 'package:get/get.dart';
 
 class AddToCartPage extends StatelessWidget {
   AddToCartPage({super.key});
 
-  final AddToCartController controller = Get.put(AddToCartController());
-  final orderController = Get.put(MenuListController());
+  final c = Get.put(AddToCartController());
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +18,13 @@ class AddToCartPage extends StatelessWidget {
       backgroundColor: Colors.grey[100],
       appBar: _buildAppBar(),
       body: Obx(() {
-        return controller.isCartEmpty
+        if (c.loadings.value) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        return c.isCartEmpty
             ? _buildEmptyCart()
             : Column(
                 children: [
@@ -27,28 +32,35 @@ class AddToCartPage extends StatelessWidget {
                   Expanded(
                     child: ListView.builder(
                       padding: const EdgeInsets.all(15),
-                      itemCount: controller.allCartItems.length,
+                      itemCount: c.allCartItems.length,
                       itemBuilder: (context, index) {
-                        final item = controller.allCartItems[index];
-                        return Obx(() => CartItemCard(
-                              item: item,
-                              isSelected: controller.selectedItems
-                                  .contains(item.cartId),
-                              onToggleSelection: () => controller
-                                  .toggleSelection(item.cartId.toString()),
-                              onIncreaseQuantity: () => controller
-                                  .increaseQuantity(item.cartId.toString()),
-                              onDecreaseQuantity: () => controller
-                                  .decreaseQuantity(item.cartId.toString()),
-                              onRemove: () =>
-                                  controller.removeItem(item.cartId.toString()),
-                            ));
+                        final item = c.allCartItems[index];
+                        return CartItemCard(
+                          item: item,
+                          isSelected: c.selectedItems.contains(item.cartId),
+                          onToggleSelection: () => c.toggleSelection(item.cartId.toString()),
+                          onIncreaseQuantity: () => c.increaseQuantity(item.cartId.toString()),
+                          onDecreaseQuantity: () => c.decreaseQuantity(item.cartId.toString()),
+                          onRemove: () => c.removeItem(item.cartId.toString()),
+                        );
                       },
                     ),
                   ),
-                  _buildCheckoutSection(),
                 ],
               );
+      }),
+      // Floating action button to proceed to checkout
+      floatingActionButton: Obx(() {
+        if (c.selectedItems.isEmpty) return const SizedBox.shrink();
+        
+        return FloatingActionButton.extended(
+          onPressed: () {
+            _showCheckoutSheet(context);
+          },
+          backgroundColor: AppColors.primaryColor,
+          icon: const Icon(Icons.shopping_bag_outlined),
+          label: const Text("Checkout"),
+        );
       }),
     );
   }
@@ -65,9 +77,9 @@ class AddToCartPage extends StatelessWidget {
       actions: [
         Obx(() => IconButton(
               icon: const Icon(Icons.delete_outline),
-              onPressed: controller.selectedItems.isEmpty
+              onPressed: c.selectedItems.isEmpty
                   ? null
-                  : () => controller.removeSelectedItems(),
+                  : () => c.removeSelectedItems(),
               tooltip: "Remove selected items",
             )),
       ],
@@ -157,31 +169,34 @@ class AddToCartPage extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Checkbox(
-                value: controller.selectedItems.length ==
-                        controller.allCartItems.length &&
-                    controller.allCartItems.isNotEmpty,
-                onChanged: (_) => controller.toggleSelectAll(),
-                activeColor: AppColors.primaryColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
+              Theme(
+                data: ThemeData(
+                  checkboxTheme: CheckboxThemeData(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+                child: Checkbox(
+                  value: c.selectedItems.length == c.allCartItems.length &&
+                      c.allCartItems.isNotEmpty,
+                  onChanged: (_) => c.toggleSelectAll(),
+                  activeColor: AppColors.primaryColor,
                 ),
               ),
-              Text(
+              const Text(
                 "Select All Items",
-                style:
-                    const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: AppColors.primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  "${controller.selectedItems.length}/${controller.allCartItems.length}",
+                  "${c.selectedItems.length}/${c.allCartItems.length}",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: AppColors.primaryColor,
@@ -193,146 +208,187 @@ class AddToCartPage extends StatelessWidget {
         ));
   }
 
-  Widget _buildCheckoutSection() {
-    return Obx(() {
-      final bool canCheckout = controller.canCheckout;
-      final double selectedTotal = controller.selectedTotal;
-
-      return Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -5),
-            ),
-          ],
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
+  void _showCheckoutSheet(BuildContext context) {
+    // Get only the selected items
+    final selectedCartItems = c.allCartItems
+        .where((item) => c.selectedItems.contains(item.cartId))
+        .toList();
+        
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
-        ),
-        child: Column(
-          children: [
-            // Order summary
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Selected Items (${controller.selectedItems.length})",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                      Text(
-                        "₹${selectedTotal.toStringAsFixed(2)}",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle bar
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  const SizedBox(height: 8),
-                  const Divider(),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Delivery Fee",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      Text(
-                        controller.selectedItems.isEmpty ? "₹0.00" : "₹40.00",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  const Divider(),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Total Amount",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        "₹${(controller.selectedItems.isEmpty ? 0 : selectedTotal + 40).toStringAsFixed(2)}",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Checkout button
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryColor,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
                 ),
-                elevation: 2,
               ),
-              onPressed: canCheckout
-                  ? () {
-                      // orderController.addOrders(, userId, paymentMethod, quantity, rate)
-                    }
-                  : null,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              
+              // Title
+              Center(
+                child: Text(
+                  "Order Summary",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryColor,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              
+              // Selected items summary
+              Text(
+                "Selected Items (${selectedCartItems.length})",
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              
+              // List of selected items (limited to 3 with "more" indicator)
+              ...selectedCartItems
+                  .take(3)
+                  .map((item) => 
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: CachedNetworkImage(
+                              imageUrl: item.foodImage ?? "",
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
+                                width: 40,
+                                height: 40,
+                                color: Colors.grey[200],
+                                child: const Center(child: CircularProgressIndicator()),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                width: 40,
+                                height: 40,
+                                color: Colors.grey[200],
+                                child: const Icon(Icons.fastfood, color: Colors.grey, size: 20),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              "${item.foodName} x${item.quantity}",
+                              style: const TextStyle(fontSize: 14),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Text(
+                            "₹${(double.parse(item.unitPrice ?? "0") * int.parse(item.quantity ?? "1")).toStringAsFixed(2)}",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ).toList(),
+              
+              // Show "more items" if there are more than 3 selected items
+              if (selectedCartItems.length > 3)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    "and ${selectedCartItems.length - 3} more items...",
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 16),
+              
+              // Total amount
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Icon(Icons.shopping_bag_outlined),
-                  const SizedBox(width: 8),
-                  Text(
-                    canCheckout
-                        ? "Proceed to Checkout"
-                        : "Select Items to Checkout",
-                    style: const TextStyle(
-                      fontSize: 16,
+                  const Text(
+                    "Total Amount",
+                    style: TextStyle(
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "₹${c.selectedTotal.toStringAsFixed(2)}",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryColor,
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      );
-    });
+              
+              const SizedBox(height: 24),
+              
+              // Proceed to checkout button
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () {
+                    Get.back(); // Close the bottom sheet
+                    Get.to(() => OrderDetailScreen(
+                      selectedItems: selectedCartItems,
+                      totalAmount: c.selectedTotal,
+                      isFromCart: true,
+                    ));
+                  },
+                  child: const Text(
+                    "Proceed to Checkout",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -381,12 +437,18 @@ class CartItemCard extends StatelessWidget {
                     // Checkbox for selection
                     Padding(
                       padding: const EdgeInsets.only(top: 8, right: 8),
-                      child: Checkbox(
-                        value: isSelected,
-                        onChanged: (_) => onToggleSelection(),
-                        activeColor: AppColors.primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
+                      child: Theme(
+                        data: ThemeData(
+                          checkboxTheme: CheckboxThemeData(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                        ),
+                        child: Checkbox(
+                          value: isSelected,
+                          onChanged: (_) => onToggleSelection(),
+                          activeColor: AppColors.primaryColor,
                         ),
                       ),
                     ),
@@ -394,16 +456,22 @@ class CartItemCard extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: CachedNetworkImage(
-                        placeholder: (context, url) =>
-                            const CircularProgressIndicator(),
-                        fit: BoxFit.cover,
-                        height: 100,
-                        width: 100,
                         imageUrl: item.foodImage ?? "",
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[200],
+                          child: const Center(child: CircularProgressIndicator()),
+                        ),
                         errorWidget: (context, url, error) => Container(
-                            color: Colors.grey[300],
-                            child: const Icon(Icons.fastfood,
-                                size: 40, color: Colors.orange)),
+                          width: 80,
+                          height: 80,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.fastfood, size: 40, color: Colors.orange),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -415,113 +483,113 @@ class CartItemCard extends StatelessWidget {
                           Text(
                             item.foodName ?? "",
                             style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
                           Text(
                             item.description ?? "",
                             style: TextStyle(
-                                color: Colors.grey[600], fontSize: 14),
+                              color: Colors.grey[600],
+                              fontSize: 14,
+                            ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 12),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     // Price
-                          //     Column(
-                          //       crossAxisAlignment: CrossAxisAlignment.start,
-                          //       children: [
-                          //         Text(
-                          //           "₹${item.unitPrice}",
-                          //           style: TextStyle(
-                          //             fontSize: 18,
-                          //             fontWeight: FontWeight.bold,
-                          //             color: AppColors.primaryColor,
-                          //           ),
-                          //         ),
-                          //         Obx(
-                          //           () {
-                          //             final qty =
-                          //                 int.tryParse(item.quantity ?? '0') ??
-                          //                     0; // Parse quantity
-                          //             final price = item.unitPrice ??
-                          //                 0.0; // Safe price default
-
-                          //             return qty > 1
-                          //                 ? Text(
-                          //                     "Total: ₹${(price * qty).toStringAsFixed(2)}", // Calculate total price
-                          //                     style: const TextStyle(
-                          //                       fontSize: 14,
-                          //                       fontWeight: FontWeight.w500,
-                          //                     ),
-                          //                   )
-                          //                 : const SizedBox
-                          //                     .shrink(); // Hide if qty <= 1
-                          //           },
-                          //         ),
-                          //       ],
-                          //     ),
-                          //     // Quantity controls
-                          //     Container(
-                          //       decoration: BoxDecoration(
-                          //         color: Colors.grey[100],
-                          //         borderRadius: BorderRadius.circular(20),
-                          //         border: Border.all(
-                          //           color: Colors.grey[300]!,
-                          //           width: 1,
-                          //         ),
-                          //       ),
-                          //       child: Row(
-                          //         children: [
-                          //           Material(
-                          //             color: Colors.transparent,
-                          //             child: InkWell(
-                          //               onTap: onDecreaseQuantity,
-                          //               borderRadius: BorderRadius.circular(20),
-                          //               child: Obx(() => Container(
-                          //                     padding: const EdgeInsets.all(6),
-                          //                     child: Icon(
-                          //                       Icons.remove,
-                          //                       color: item.quantity.value > 1
-                          //                           ? AppColors.primaryColor
-                          //                           : Colors.grey,
-                          //                       size: 20,
-                          //                     ),
-                          //                   )),
-                          //             ),
-                          //           ),
-                          //           Obx(() => Container(
-                          //                 padding: const EdgeInsets.symmetric(
-                          //                     horizontal: 8),
-                          //                 child: Text(
-                          //                   "${item.quantity.value}",
-                          //                   style: const TextStyle(
-                          //                       fontSize: 16,
-                          //                       fontWeight: FontWeight.bold),
-                          //                 ),
-                          //               )),
-                          //           Material(
-                          //             color: Colors.transparent,
-                          //             child: InkWell(
-                          //               onTap: onIncreaseQuantity,
-                          //               borderRadius: BorderRadius.circular(20),
-                          //               child: Container(
-                          //                 padding: const EdgeInsets.all(6),
-                          //                 child: Icon(
-                          //                   Icons.add,
-                          //                   color: AppColors.primaryColor,
-                          //                   size: 20,
-                          //                 ),
-                          //               ),
-                          //             ),
-                          //           ),
-                          //         ],
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
+                          // Price and quantity controls
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Price
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "₹${item.unitPrice}",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primaryColor,
+                                    ),
+                                  ),
+                                  int.parse(item.quantity ?? "0") > 1
+                                      ? Text(
+                                          "Total: ₹${(double.parse(item.unitPrice ?? "0") * int.parse(item.quantity ?? "1")).toStringAsFixed(2)}",
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        )
+                                      : const SizedBox.shrink(),
+                                ],
+                              ),
+                              // Quantity controls
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: Colors.grey[300]!,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // Decrease button
+                                    Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: onDecreaseQuantity,
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          child: Icon(
+                                            Icons.remove,
+                                            color: int.parse(item.quantity ?? "0") > 1
+                                                ? AppColors.primaryColor
+                                                : Colors.grey,
+                                            size: 20,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    // Quantity display
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                                      child: Text(
+                                        item.quantity ?? "0",
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    // Increase button
+                                    Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: onIncreaseQuantity,
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          child: Icon(
+                                            Icons.add,
+                                            color: AppColors.primaryColor,
+                                            size: 20,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),

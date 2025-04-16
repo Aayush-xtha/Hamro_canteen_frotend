@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:folder_structure/model/notification.dart';
 import 'package:get/get.dart';
 import 'package:folder_structure/controller/dashboard/notification_controller.dart';
-import 'package:folder_structure/utils/custom_text_styles.dart';
+
 import 'package:folder_structure/utils/color.dart';
 import 'package:intl/intl.dart';
 

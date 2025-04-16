@@ -16,17 +16,11 @@ class HistoryDetailScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Top curved background
           _buildTopBackground(size),
-
-          // Main content
           SafeArea(
             child: Column(
               children: [
-                // App bar with back button
                 _buildAppBar(),
-
-                // Order details content
                 Expanded(
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
@@ -35,31 +29,24 @@ class HistoryDetailScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Order ID
                           _buildOrderDetailCard(
                             Icons.receipt,
                             'Order ID',
                             order.orderId ?? "",
                             color: AppColors.primaryColor,
                           ),
-
-                          // Order Status
                           _buildOrderDetailCard(
                             Icons.timelapse,
                             'Order Status',
                             order.orderStatus ?? 'Pending',
                             color: Colors.green,
                           ),
-
-                          // Payment Method
                           _buildOrderDetailCard(
                             Icons.payment,
                             'Payment Method',
                             order.payment?.method ?? 'N/A',
                             color: Colors.orange,
                           ),
-
-                          // Items
                           _buildOrderDetailCard(
                             Icons.fastfood,
                             'Items',
@@ -69,22 +56,55 @@ class HistoryDetailScreen extends StatelessWidget {
                                 'No items',
                             color: Colors.purple,
                           ),
-
-                          // Total Price
                           _buildOrderDetailCard(
                             Icons.attach_money,
                             'Total Price',
                             '₹${order.totalAmount ?? '0'}',
                             color: Colors.teal,
                           ),
-
                           const SizedBox(height: 24),
-
-                          // Payment Status Section
                           _buildSectionTitle('Payment Status'),
                           const SizedBox(height: 12),
-                          _buildDetailText(order.orderStatus ?? 'N/A'),
-
+                          _buildPaymentStatusSection(
+                              order.orderStatus ?? 'N/A'),
+                          const SizedBox(height: 24),
+                          // if ((order.orderStatus?.toLowerCase() ?? "") ==
+                          //         'pending'
+                          if ((order.orderStatus?.toLowerCase() ?? "") ==
+                              'pending')
+                            Center(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.defaultDialog(
+                                    title: "Cancel Order",
+                                    middleText:
+                                        "Are you sure you want to cancel this order?",
+                                    textConfirm: "Yes",
+                                    textCancel: "No",
+                                    confirmTextColor: Colors.white,
+                                    onConfirm: () {
+                                      Get.back();
+                                      Get.snackbar("Cancelled",
+                                          "Order has been cancelled.");
+                                    },
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 30, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: const Text(
+                                  "Cancel Order",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
                           const SizedBox(height: 40),
                         ],
                       ),
@@ -122,45 +142,34 @@ class HistoryDetailScreen extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Decorative circles
             Positioned(
               top: 50,
               left: 20,
-              child: Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.1),
-                ),
-              ),
+              child: _buildCircle(80),
             ),
             Positioned(
               top: 100,
               right: 40,
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.1),
-                ),
-              ),
+              child: _buildCircle(60),
             ),
             Positioned(
               bottom: 40,
               left: 100,
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.1),
-                ),
-              ),
+              child: _buildCircle(40),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildCircle(double size) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white.withOpacity(0.1),
       ),
     );
   }
@@ -198,7 +207,7 @@ class HistoryDetailScreen extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          const SizedBox(width: 48), // Balance the back button
+          const SizedBox(width: 48),
         ],
       ),
     );
@@ -229,33 +238,21 @@ class HistoryDetailScreen extends StatelessWidget {
             color: color.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            icon,
-            color: color,
-            size: 24,
-          ),
+          child: Icon(icon, color: color, size: 24),
         ),
         title: Text(
           title,
           style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
+              fontSize: 16, fontWeight: FontWeight.bold, color: color),
         ),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 8),
           child: Text(
             value,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.black87,
-            ),
+            style: const TextStyle(fontSize: 16, color: Colors.black87),
           ),
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }
@@ -269,31 +266,26 @@ class HistoryDetailScreen extends StatelessWidget {
             color: AppColors.primaryColor.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            Icons.payments_outlined,
-            color: AppColors.primaryColor,
-            size: 20,
-          ),
+          child: Icon(Icons.payments_outlined,
+              color: AppColors.primaryColor, size: 20),
         ),
         const SizedBox(width: 12),
         Text(
           title,
           style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[800],
-          ),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[800]),
         ),
       ],
     );
   }
 
-  Widget _buildDetailText(String text) {
-    // Determine status color
+  Widget _buildPaymentStatusSection(String status) {
     Color statusColor;
     IconData statusIcon;
 
-    switch (text.toLowerCase()) {
+    switch (status.toLowerCase()) {
       case 'completed':
       case 'delivered':
         statusColor = Colors.green;
@@ -322,10 +314,7 @@ class HistoryDetailScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: statusColor.withOpacity(0.5),
-          width: 1.5,
-        ),
+        border: Border.all(color: statusColor.withOpacity(0.5), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
@@ -343,29 +332,19 @@ class HistoryDetailScreen extends StatelessWidget {
               color: statusColor.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              statusIcon,
-              color: statusColor,
-              size: 32,
-            ),
+            child: Icon(statusIcon, color: statusColor, size: 32),
           ),
           const SizedBox(height: 16),
           Text(
-            text.toUpperCase(),
+            status.toUpperCase(),
             style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: statusColor,
-            ),
+                fontSize: 18, fontWeight: FontWeight.bold, color: statusColor),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
-            _getStatusDescription(text),
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[700],
-            ),
+            _getStatusDescription(status),
+            style: TextStyle(fontSize: 14, color: Colors.grey[700]),
             textAlign: TextAlign.center,
           ),
         ],
