@@ -24,13 +24,24 @@ class OrderDetailScreen extends StatelessWidget {
   final List<CartItems>? selectedItems;
   final double totalAmount;
   final coreController = Get.put(CoreController());
+  double get calculatedTotalAmount {
+    if (isFromCart && selectedItems != null && selectedItems!.isNotEmpty) {
+      return selectedItems!.fold(0.0, (sum, item) {
+        final price = double.tryParse(item.unitPrice ?? "0") ?? 0.0;
+        final qty = int.tryParse(item.quantity ?? "1") ?? 1;
+        return sum + (price * qty);
+      });
+    } else if (foods != null) {
+      final price = double.tryParse(foods!.price.toString()) ?? 0.0;
+      final qty = int.tryParse(quantity) ?? 1;
+      return price * qty;
+    }
+    return 0.0;
+  }
 
   @override
   Widget build(BuildContext context) {
     // Calculate total amount for single food item
-    final double singleItemTotal = foods != null
-        ? double.parse(foods!.price.toString()) * int.parse(quantity)
-        : 0.0;
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -109,14 +120,15 @@ class OrderDetailScreen extends StatelessWidget {
                     // Create a comma-separated list of quantities
                     final quantities =
                         selectedItems!.map((item) => item.quantity).join(',');
+                    final foodIds =
+                        selectedItems!.map((item) => item.foodId).join(',');
+                    final prices = selectedItems!
+                        .map((item) => item.itemTotalPrice)
+                        .join(',');
 
                     Get.to(() => PaymentOptionScreen(
-                          quantity: quantities,
-                          price: totalAmount.toString(),
-                          foodId: selectedItems!
-                              .map((item) => item.foodId)
-                              .join(','),
-                          // Remove isFromCart parameter as it's not defined in PaymentOptionScreen
+                        quantity: quantities, price: prices, foodId: foodIds
+                        // Remove isFromCart parameter as it's not defined in PaymentOptionScreen
                         ));
                   } else if (foods != null) {
                     // Handle single item checkout
@@ -305,10 +317,6 @@ class OrderDetailScreen extends StatelessWidget {
 
   // Widget for displaying order summary for a single item
   Widget _buildSingleItemOrderSummary() {
-    final double totalAmount = foods != null
-        ? double.parse(foods!.price.toString()) * int.parse(quantity)
-        : 0.0;
-
     return Column(
       children: [
         Row(
@@ -345,7 +353,7 @@ class OrderDetailScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text("Total Amount", style: CustomTextStyles.f16W600()),
-            Text("₹${totalAmount.toStringAsFixed(2)}",
+            Text("₹${calculatedTotalAmount.toStringAsFixed(2)}",
                 style: CustomTextStyles.f16W600(color: Colors.green)),
           ],
         ),

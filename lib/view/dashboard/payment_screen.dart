@@ -8,20 +8,38 @@ import 'package:get/get.dart';
 
 class PaymentOptionScreen extends StatelessWidget {
   final c = Get.put(MenuListController());
-  PaymentOptionScreen(
-      {super.key,
-      required this.quantity,
-      required this.price,
-      required this.foodId});
+
+  PaymentOptionScreen({
+    super.key,
+    required this.quantity,
+    required this.price,
+    required this.foodId,
+  });
 
   final String quantity;
   final String price;
   final String foodId;
+
   final coreController = Get.put(CoreController());
 
   @override
   Widget build(BuildContext context) {
-    final double totalAmount = double.parse(price) * int.parse(quantity);
+    // Split and parse quantity and price lists
+    List<String> quantityList = quantity.split(',');
+    List<String> priceList = price.split(',');
+    // List<String> foodIdList = foodId.split(',');
+
+    List<int> quantities =
+        quantityList.map((q) => int.tryParse(q.trim()) ?? 0).toList();
+    List<double> prices =
+        priceList.map((p) => double.tryParse(p.trim()) ?? 0.0).toList();
+
+    // Calculate total quantity and total amount
+    int totalQty = quantities.fold(0, (sum, q) => sum + q);
+    double totalAmount = 0;
+    for (int i = 0; i < quantities.length; i++) {
+      totalAmount += prices[i] * quantities[i];
+    }
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -75,7 +93,7 @@ class PaymentOptionScreen extends StatelessWidget {
                         border: Border.all(color: Colors.green.shade300),
                       ),
                       child: Text(
-                        "Qty: $quantity",
+                        "Qty: $totalQty",
                         style: CustomTextStyles.f12W600(color: Colors.green),
                       ),
                     ),
@@ -84,7 +102,7 @@ class PaymentOptionScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 _buildSummaryRow("Item Price", "RS $price"),
                 const SizedBox(height: 8),
-                _buildSummaryRow("Quantity", quantity),
+                _buildSummaryRow("Quantity", totalQty.toString()),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
                   child: Divider(),
@@ -126,7 +144,7 @@ class PaymentOptionScreen extends StatelessWidget {
             ),
           ),
 
-          // Payment methods
+          // Payment method options
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
@@ -177,13 +195,14 @@ class PaymentOptionScreen extends StatelessWidget {
                     ? null
                     : () {
                         if (c.selectedPayment.value == 'esewa') {
-                          final Esewa esewa = Esewa();
+                          final esewa = Esewa();
                           esewa.pay(
-                              foodId,
-                              coreController.currentUser.value!.id.toString(),
-                              c.selectedPayment.value,
-                              quantity,
-                              price);
+                            foodId,
+                            coreController.currentUser.value!.id.toString(),
+                            c.selectedPayment.value,
+                            quantity,
+                            price,
+                          );
                         }
                       },
                 style: ElevatedButton.styleFrom(

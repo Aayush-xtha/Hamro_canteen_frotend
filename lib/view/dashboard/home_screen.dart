@@ -4,7 +4,9 @@ import 'package:folder_structure/controller/dashboard/home_screen_controller.dar
 import 'package:folder_structure/model/food_detail.dart';
 import 'package:folder_structure/utils/color.dart';
 import 'package:folder_structure/utils/custom_text_styles.dart';
+import 'package:folder_structure/view/dashboard/Staff_home_page.dart';
 import 'package:folder_structure/view/dashboard/cart_screen.dart';
+import 'package:folder_structure/view/dashboard/edit_profile_screen.dart';
 import 'package:folder_structure/view/dashboard/food_description_screen.dart';
 import 'package:folder_structure/view/dashboard/notification_screen.dart';
 import 'package:get/get.dart';
@@ -16,174 +18,185 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-        elevation: 0,
-        title: Obx(() => Text(
-              "Hello, ${coreController.currentUser.value?.firstName ?? 'Guest'}",
-              style: CustomTextStyles.f16W600(),
-            )),
-        actions: [
-          // Notification Icon with Badge
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined),
-                color: Colors.black87,
-                onPressed: () {
-                  Get.to(() => NotificationScreen());
-                },
-              ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  constraints: const BoxConstraints(
-                    minWidth: 16,
-                    minHeight: 16,
-                  ),
-                  child: const Text(
-                    '3',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
+    return Obx(() {
+      if (coreController.currentUser.value!.role == 'user') {
+        return Scaffold(
+          backgroundColor: Colors.grey[50],
+          appBar: AppBar(
+            backgroundColor: AppColors.whiteColor,
+            elevation: 0,
+            title: Obx(() => Text(
+                  "Hello, ${coreController.currentUser.value?.firstName ?? 'Guest'}",
+                  style: CustomTextStyles.f16W600(),
+                )),
+            actions: [
+              // Notification Icon with Badge
+              if (coreController.currentUser.value!.role == "user")
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.notifications_outlined),
+                      color: Colors.black87,
+                      onPressed: () {
+                        Get.to(() => NotificationScreen());
+                      },
                     ),
-                    textAlign: TextAlign.center,
-                  ),
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: const Text(
+                          '3',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+              // Cart Icon with Badge
+              if (coreController.currentUser.value!.role == "user")
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.shopping_cart_outlined),
+                      color: Colors.black87,
+                      onPressed: () {
+                        Get.to(() => AddToCartPage());
+                      },
+                    ),
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: const Text(
+                          '2',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              const SizedBox(width: 8),
             ],
           ),
-          // Cart Icon with Badge
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.shopping_cart_outlined),
-                color: Colors.black87,
-                onPressed: () {
-                  Get.to(() => AddToCartPage());
-                },
-              ),
-              Positioned(
-                top: 10,
-                right: 10,
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  constraints: const BoxConstraints(
-                    minWidth: 16,
-                    minHeight: 16,
-                  ),
-                  child: const Text(
-                    '2',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
+          body: Obx(() {
+            if (homeController.isLoading.value) {
+              return Center(
+                child: CircularProgressIndicator(
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+                ),
+              );
+            }
+
+            if (homeController.errorMessage.value.isNotEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 60,
+                      color: Colors.red[300],
                     ),
-                    textAlign: TextAlign.center,
-                  ),
+                    const SizedBox(height: 16),
+                    Text(
+                      "Error",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[800],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Text(
+                        homeController.errorMessage.value,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      onPressed: () => homeController.fetchFoodData(),
+                      icon: const Icon(Icons.refresh),
+                      label: const Text("Try Again"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 12),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: () => homeController.fetchFoodData(),
+              color: AppColors.primaryColor,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // User Profile Card
+                    _buildUserProfileCard(),
+
+                    // Search Bar
+                    _buildSearchBar(),
+
+                    // Search Results (if searching)
+                    if (homeController.isSearching.value)
+                      _buildSearchResults()
+                    else
+                      _buildMainContent(),
+                  ],
                 ),
               ),
-            ],
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: Obx(() {
-        if (homeController.isLoading.value) {
-          return Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
-            ),
-          );
-        }
-
-        if (homeController.errorMessage.value.isNotEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 60,
-                  color: Colors.red[300],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  "Error",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Text(
-                    homeController.errorMessage.value,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton.icon(
-                  onPressed: () => homeController.fetchFoodData(),
-                  icon: const Icon(Icons.refresh),
-                  label: const Text("Try Again"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryColor,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-
-        return RefreshIndicator(
-          onRefresh: () => homeController.fetchFoodData(),
-          color: AppColors.primaryColor,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // User Profile Card
-                _buildUserProfileCard(),
-
-                // Search Bar
-                _buildSearchBar(),
-
-                // Search Results (if searching)
-                if (homeController.isSearching.value)
-                  _buildSearchResults()
-                else
-                  _buildMainContent(),
-              ],
-            ),
-          ),
+            );
+          }),
         );
-      }),
-    );
+      } else {
+        Get.to(() => StaffHomePage());
+      }
+
+      return SizedBox.shrink();
+    });
   }
 
   Widget _buildUserProfileCard() {
@@ -274,7 +287,7 @@ class HomeScreen extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.edit_outlined, color: Colors.white),
               onPressed: () {
-                // Handle edit profile
+                Get.to(() => EditProfileScreen());
               },
             ),
           ],
@@ -1198,7 +1211,7 @@ class HomeScreen extends StatelessWidget {
                       topRight: Radius.circular(16),
                     ),
                     child: Image.network(
-                      food.foodImage ?? "https://via.placeholder.com/160x120",
+                      food.foodImage ?? "assets/images/blank_image.png",
                       height: 120,
                       width: double.infinity,
                       fit: BoxFit.cover,
@@ -1322,7 +1335,7 @@ class HomeScreen extends StatelessWidget {
     if (name.contains('burger')) return Icons.lunch_dining;
     if (name.contains('pizza')) return Icons.local_pizza;
     if (name.contains('dessert')) return Icons.icecream;
-    if (name.contains('drink') || name.contains('beverage'))
+    if (name.contains('cold drink') || name.contains('beverage'))
       return Icons.local_drink;
     if (name.contains('salad') || name.contains('veg')) return Icons.eco;
     if (name.contains('chicken') || name.contains('meat'))

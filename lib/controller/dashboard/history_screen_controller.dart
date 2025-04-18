@@ -22,4 +22,26 @@ class HistoryScreenController extends GetxController {
       CustomSnackBar.error(title: "foods", message: message);
     });
   }
+
+  filterOrderdDetails() async {
+    loadings.value = true;
+    await GetOrderRepo.getOrderRepo(
+      onSuccess: (order) {
+        loadings.value = false;
+
+        // ✅ Filter only pending orders here
+        final pendingOrders = order
+            .where(
+              (o) => o.orderStatus?.toLowerCase() == 'pending',
+            )
+            .toList();
+
+        allOrderHistory.assignAll(pendingOrders);
+      },
+      onError: (message) {
+        loadings.value = false;
+        CustomSnackBar.error(title: "foods", message: message);
+      },
+    );
+  }
 }

@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:folder_structure/controller/core_controller.dart';
 import 'package:folder_structure/utils/color.dart';
+import 'package:folder_structure/view/dashboard/change_password_screen.dart';
 import 'package:folder_structure/view/dashboard/edit_profile_screen.dart';
+import 'package:folder_structure/view/dashboard/notification_screen.dart';
 import 'package:get/get.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -293,7 +295,7 @@ class ProfileScreen extends StatelessWidget {
                             subtitle: "Update your password",
                             iconColor: Colors.blue,
                             onTap: () {
-                              // Navigate to change password screen
+                              Get.to(() => ChangePasswordScreen());
                             },
                           ),
                           _buildDivider(),
@@ -303,7 +305,7 @@ class ProfileScreen extends StatelessWidget {
                             subtitle: "Manage your notification preferences",
                             iconColor: Colors.orange,
                             onTap: () {
-                              // Navigate to notifications settings
+                              Get.to(() => NotificationScreen());
                             },
                           ),
                           _buildDivider(),

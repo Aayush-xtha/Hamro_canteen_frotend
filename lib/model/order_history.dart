@@ -26,16 +26,16 @@ class OrderHistory {
     orderStatus = json['order_status'];
     orderDate = json['order_date'];
     userDetails = json['user_details'] != null
-        ? UserDetails.fromJson(json['user_details'])
+        ? new UserDetails.fromJson(json['user_details'])
         : null;
     if (json['items'] != null) {
       items = <Items>[];
       json['items'].forEach((v) {
-        items!.add(Items.fromJson(v));
+        items!.add(new Items.fromJson(v));
       });
     }
     payment =
-        json['payment'] != null ? Payment.fromJson(json['payment']) : null;
+        json['payment'] != null ? new Payment.fromJson(json['payment']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -132,23 +132,34 @@ class Items {
 }
 
 class Payment {
+  String? paymentId;
   String? method;
   String? amount;
   String? paymentDate;
+  int? paymentStatus;
 
-  Payment({this.method, this.amount, this.paymentDate});
+  Payment(
+      {this.paymentId,
+      this.method,
+      this.amount,
+      this.paymentDate,
+      this.paymentStatus});
 
   Payment.fromJson(Map<String, dynamic> json) {
+    paymentId = json['payment_id'];
     method = json['method'];
     amount = json['amount'];
     paymentDate = json['payment_date'];
+    paymentStatus = json['payment_status'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['payment_id'] = paymentId;
     data['method'] = method;
     data['amount'] = amount;
     data['payment_date'] = paymentDate;
+    data['payment_status'] = paymentStatus;
     return data;
   }
 }

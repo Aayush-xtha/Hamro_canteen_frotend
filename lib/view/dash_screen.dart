@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:folder_structure/controller/core_controller.dart';
 import 'package:folder_structure/controller/dash_screen_controller.dart';
 import 'package:folder_structure/utils/color.dart';
 import 'package:folder_structure/utils/image_path.dart';
@@ -7,18 +8,27 @@ import 'package:get/get.dart';
 
 class DashScreen extends StatelessWidget {
   final c = Get.put(DashScreenController());
+  final coreController = Get.put(CoreController());
+
   DashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final role = coreController.currentUser.value?.role;
+
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       body: Stack(
         children: [
-          // Main content
-          Obx(() => c.pages[c.currentIndex.value]),
-
-          // Bottom navigation bar shadow (separate from the bar for better effect)
+          // Dynamic content based on role
+          Obx(() {
+            if (role == 'staff') {
+              return c.staffPages[c.currentIndex
+                  .value]; // Add staff-specific pages in controller
+            } else {
+              return c.pages[c.currentIndex.value]; // Default user pages
+            }
+          }),
           Positioned(
             bottom: 0,
             left: 0,
@@ -39,59 +49,51 @@ class DashScreen extends StatelessWidget {
           ),
         ],
       ),
-
-      // Floating action button
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     // Add your action here
-      //   },
-      //   backgroundColor: AppColors.primaryColor,
-      //   elevation: 4,
-      //   child: const Icon(
-      //     Icons.shopping_cart,
-      //     color: Colors.white,
-      //   ),
-      // ),
-
-      // // Floating action button position
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
-      // Bottom navigation bar
       bottomNavigationBar: Obx(
-        () => Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-            child: BottomAppBar(
-              height: 70,
-              padding: EdgeInsets.zero,
-              notchMargin: 8,
-              elevation: 0,
-              shape: const CircularNotchedRectangle(),
-              color: AppColors.whiteColor,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
+        () {
+          final isStaff = role == 'staff';
+          final items = isStaff
+              ? [
+                  _buildNavItem(0, ImagePath.home, 'Home'),
+                  _buildNavItem(1, ImagePath.history, 'Orders'),
+                  _buildNavItem(2, ImagePath.userprofile, 'Profile'),
+                ]
+              : [
                   _buildNavItem(0, ImagePath.home, 'Home'),
                   _buildNavItem(1, ImagePath.menu, 'Menu'),
-                  // Empty space for FAB
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 10), // space for FAB
                   _buildNavItem(2, ImagePath.history, 'History'),
                   _buildNavItem(3, ImagePath.userprofile, 'Profile'),
-                ],
+                ];
+
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
               ),
             ),
-          ),
-        ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+              child: BottomAppBar(
+                height: 70,
+                padding: EdgeInsets.zero,
+                notchMargin: 8,
+                elevation: 0,
+                shape: const CircularNotchedRectangle(),
+                color: AppColors.whiteColor,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: items,
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
