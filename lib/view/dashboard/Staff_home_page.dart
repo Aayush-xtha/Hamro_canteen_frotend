@@ -34,13 +34,13 @@ class StaffHomePage extends StatelessWidget {
           ),
           backgroundColor: AppColors.primaryColor,
         ),
-        body: Column(
-          children: [
-            _buildUserProfileCard(),
-            Expanded(
-              child: _buildPendingOrdersList(),
-            ),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildUserProfileCard(),
+              _buildPendingOrdersList(),
+            ],
+          ),
         ),
       );
     });
@@ -160,6 +160,7 @@ class StaffHomePage extends StatelessWidget {
           return ListView.builder(
             itemCount: orderConfirmController.allOrderHistory.length,
             shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               final order = orderConfirmController.allOrderHistory[index];
               final user = order.userDetails;

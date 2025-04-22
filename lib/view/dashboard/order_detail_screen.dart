@@ -116,8 +116,7 @@ class OrderDetailScreen extends StatelessWidget {
                   if (isFromCart &&
                       selectedItems != null &&
                       selectedItems!.isNotEmpty) {
-                    // Handle multiple items checkout
-                    // Create a comma-separated list of quantities
+               
                     final quantities =
                         selectedItems!.map((item) => item.quantity).join(',');
                     final foodIds =
@@ -185,7 +184,7 @@ class OrderDetailScreen extends StatelessWidget {
               placeholder: (context, url) =>
                   const Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => Image.network(
-                "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+                "assets/images/blank_image.png",
                 height: 80,
                 width: 80,
                 fit: BoxFit.cover,

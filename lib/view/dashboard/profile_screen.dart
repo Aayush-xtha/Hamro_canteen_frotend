@@ -29,7 +29,6 @@ class ProfileScreen extends StatelessWidget {
 
         return CustomScrollView(
           slivers: [
-            // App Bar with Profile Image
             SliverAppBar(
               expandedHeight: 200,
               pinned: true,
@@ -349,15 +348,6 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 30),
 
                     // App version
-                    Center(
-                      child: Text(
-                        "App Version 1.0.0",
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
 
                     const SizedBox(height: 20),
                   ],

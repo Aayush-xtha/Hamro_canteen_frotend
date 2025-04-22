@@ -16,4 +16,5 @@ class Api {
   static const String changePasswordUrl = "$baseUrl/change_password.php";
   static const String confirmOrderUrl = "$baseUrl/staff_order_confirmation.php";
   static const String paymentStatusUrl = "$baseUrl/update_paymet_status.php";
+  static const String switchBranchUrl = "$baseUrl/switch_branch.php";
 }

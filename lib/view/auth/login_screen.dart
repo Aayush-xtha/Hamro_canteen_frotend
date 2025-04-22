@@ -39,20 +39,10 @@ class LoginScreen extends StatelessWidget {
                     // Login form
                     _buildLoginForm(),
 
-                    const SizedBox(height: 24),
-
-                    // Forgot password
-                    _buildForgotPassword(),
-
                     const SizedBox(height: 32),
 
                     // Login button
                     _buildLoginButton(),
-
-                    const SizedBox(height: 40),
-
-                    // Social login
-                    _buildSocialLogin(),
 
                     const SizedBox(height: 30),
 
@@ -324,30 +314,6 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildForgotPassword() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: TextButton(
-        onPressed: () {
-          // Forgot password functionality
-        },
-        style: TextButton.styleFrom(
-          padding: EdgeInsets.zero,
-          minimumSize: const Size(50, 30),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        ),
-        child: Text(
-          "Forgot Password?",
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.primaryColor,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildLoginButton() {
     return Container(
       width: double.infinity,
@@ -386,98 +352,6 @@ class LoginScreen extends StatelessWidget {
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSocialLogin() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                "Or continue with",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[500],
-                ),
-              ),
-            ),
-            Expanded(child: Divider(color: Colors.grey[300], thickness: 1)),
-          ],
-        ),
-        const SizedBox(height: 24),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildSocialButton(
-              icon: Icons.g_mobiledata,
-              color: Colors.red,
-              label: "Google",
-            ),
-            const SizedBox(width: 16),
-            _buildSocialButton(
-              icon: Icons.facebook,
-              color: Colors.blue,
-              label: "Facebook",
-            ),
-            const SizedBox(width: 16),
-            _buildSocialButton(
-              icon: Icons.apple,
-              color: Colors.black,
-              label: "Apple",
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSocialButton({
-    required IconData icon,
-    required Color color,
-    required String label,
-  }) {
-    return Expanded(
-      child: Container(
-        height: 56,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey[200]!),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
-              blurRadius: 10,
-              spreadRadius: 0,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () {},
-            borderRadius: BorderRadius.circular(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, color: color, size: 24),
-                const SizedBox(height: 4),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[700],
-                  ),
-                ),
-              ],
             ),
           ),
         ),

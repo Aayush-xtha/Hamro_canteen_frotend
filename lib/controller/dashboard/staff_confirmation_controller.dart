@@ -18,16 +18,23 @@ class StaffConfirmationController extends GetxController {
 
   filterOrderdDetails() async {
     loadings.value = true;
+
     await GetOrderRepo.getOrderRepo(
       onSuccess: (pay) {
         loadings.value = false;
-
-        // ✅ Filter only pending orders here
         final paymentMethod = pay
             .where(
-              (p) => p.payment!.method?.toLowerCase() == 'cash',
+              (p) =>
+                  p.payment?.method?.toLowerCase() == 'cash' ||
+                  p.orderStatus?.toLowerCase() == "pending",
             )
             .toList();
+
+        paymentMethod.sort((a, b) {
+          final dateA = DateTime.tryParse(a.orderDate ?? '') ?? DateTime.now();
+          final dateB = DateTime.tryParse(b.orderDate ?? '') ?? DateTime.now();
+          return dateB.compareTo(dateA);
+        });
 
         allOrderHistory.assignAll(paymentMethod);
       },

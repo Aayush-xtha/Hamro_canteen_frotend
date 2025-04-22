@@ -3,6 +3,7 @@ import 'package:folder_structure/controller/core_controller.dart';
 import 'package:folder_structure/controller/dashboard/menu_list_controller.dart';
 import 'package:folder_structure/function/esewa_function.dart';
 import 'package:folder_structure/utils/color.dart';
+import 'package:folder_structure/utils/custom_snackbar.dart';
 import 'package:folder_structure/utils/custom_text_styles.dart';
 import 'package:get/get.dart';
 
@@ -162,7 +163,7 @@ class PaymentOptionScreen extends StatelessWidget {
                     )),
                 Obx(() => PaymentButton(
                       image: "assets/images/blank_image.png",
-                      title: "Cash on Delivery",
+                      title: "Cash on pickup",
                       subtitle: "Pay when you receive your order",
                       isSelected: c.selectedPayment.value == 'cash',
                       icon: Icons.money,
@@ -170,7 +171,7 @@ class PaymentOptionScreen extends StatelessWidget {
                       onTap: () {
                         c.updateSeletedPayment("cash");
                       },
-                    )),
+                    ))
               ],
             ),
           ),
@@ -203,6 +204,13 @@ class PaymentOptionScreen extends StatelessWidget {
                             quantity,
                             price,
                           );
+                        } else {
+                          c.addOrders(
+                              foodId,
+                              coreController.currentUser.value!.id.toString(),
+                              c.selectedPayment.value,
+                              quantity,
+                              price);
                         }
                       },
                 style: ElevatedButton.styleFrom(

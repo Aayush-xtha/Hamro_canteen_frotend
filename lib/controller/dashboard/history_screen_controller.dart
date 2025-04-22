@@ -1,6 +1,5 @@
 import 'package:folder_structure/model/order_history.dart';
 import 'package:folder_structure/repo/get_order_history.dart';
-import 'package:folder_structure/utils/custom_snackbar.dart';
 import 'package:get/get.dart';
 
 class HistoryScreenController extends GetxController {
@@ -19,7 +18,7 @@ class HistoryScreenController extends GetxController {
       allOrderHistory.addAll(order);
     }, onError: (message) {
       loadings.value = false;
-      CustomSnackBar.error(title: "foods", message: message);
+      // CustomSnackBar.error(title: "foods", message: message);
     });
   }
 
@@ -40,7 +39,7 @@ class HistoryScreenController extends GetxController {
       },
       onError: (message) {
         loadings.value = false;
-        CustomSnackBar.error(title: "foods", message: message);
+        // CustomSnackBar.error(title: "foods", message: message);
       },
     );
   }

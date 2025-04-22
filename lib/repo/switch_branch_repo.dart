@@ -5,11 +5,9 @@ import 'package:folder_structure/utils/api.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-class ChangePasswordRepo {
-  static Future<void> changePassword({
-    required String currentPassword,
-    required String newPassword,
-    required String confirmPassword,
+class SwitchBranchRepo {
+  static Future<void> switchBranchRepo({
+    required String branchId,
     required Function() onSuccess,
     required Function(String message) onError,
   }) async {
@@ -20,13 +18,10 @@ class ChangePasswordRepo {
         "Accept": "application/json",
       };
       var body = {
-        "id": userId,
-        "old_password": currentPassword,
-      
-        "new_password": newPassword,
-        "confirm_password": confirmPassword,
+        "user_id": userId,
+        "branch_id": branchId,
       };
-      http.Response response = await http.post(Uri.parse(Api.changePasswordUrl),
+      http.Response response = await http.post(Uri.parse(Api.switchBranchUrl),
           headers: headers, body: body);
       dynamic data = jsonDecode(response.body);
       log("$data");

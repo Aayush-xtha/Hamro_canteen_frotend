@@ -9,6 +9,7 @@ import 'package:folder_structure/view/dashboard/cart_screen.dart';
 import 'package:folder_structure/view/dashboard/edit_profile_screen.dart';
 import 'package:folder_structure/view/dashboard/food_description_screen.dart';
 import 'package:folder_structure/view/dashboard/notification_screen.dart';
+import 'package:folder_structure/view/dashboard/switch_branch_screen.dart';
 import 'package:get/get.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -23,92 +24,61 @@ class HomeScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: Colors.grey[50],
           appBar: AppBar(
-            backgroundColor: AppColors.whiteColor,
-            elevation: 0,
-            title: Obx(() => Text(
-                  "Hello, ${coreController.currentUser.value?.firstName ?? 'Guest'}",
-                  style: CustomTextStyles.f16W600(),
-                )),
-            actions: [
-              // Notification Icon with Badge
-              if (coreController.currentUser.value!.role == "user")
+              backgroundColor: AppColors.whiteColor,
+              elevation: 0,
+              title: Obx(() => Text(
+                    "Hello, ${coreController.currentUser.value?.firstName ?? 'Guest'}",
+                    style: CustomTextStyles.f16W600(),
+                  )),
+              actions: [
+                // Notification Icon with Badge
+                if (coreController.currentUser.value!.role == "user")
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.notifications_outlined),
+                        color: Colors.black87,
+                        onPressed: () {
+                          Get.to(() => NotificationScreen());
+                        },
+                      ),
+                    ],
+                  ),
+
+                // Cart Icon with Badge
+                if (coreController.currentUser.value!.role == "user")
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.shopping_cart_outlined),
+                        color: Colors.black87,
+                        onPressed: () {
+                          Get.to(() => AddToCartPage());
+                        },
+                      ),
+                    ],
+                  ),
+
+                // Switch Branch Icon
                 Stack(
                   alignment: Alignment.center,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.notifications_outlined),
+                      icon: const Icon(Icons.sync_alt), // or Icons.swap_horiz
                       color: Colors.black87,
+                      tooltip: "Switch Branch",
                       onPressed: () {
-                        Get.to(() => NotificationScreen());
+                        Get.to(() =>
+                            SwitchBranchScreen()); // make sure this page exists
                       },
-                    ),
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 16,
-                          minHeight: 16,
-                        ),
-                        child: const Text(
-                          '3',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
                     ),
                   ],
                 ),
-              // Cart Icon with Badge
-              if (coreController.currentUser.value!.role == "user")
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.shopping_cart_outlined),
-                      color: Colors.black87,
-                      onPressed: () {
-                        Get.to(() => AddToCartPage());
-                      },
-                    ),
-                    Positioned(
-                      top: 10,
-                      right: 10,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 16,
-                          minHeight: 16,
-                        ),
-                        child: const Text(
-                          '2',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              const SizedBox(width: 8),
-            ],
-          ),
+
+                const SizedBox(width: 8),
+              ]),
           body: Obx(() {
             if (homeController.isLoading.value) {
               return Center(
