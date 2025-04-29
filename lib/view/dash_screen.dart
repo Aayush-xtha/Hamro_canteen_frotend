@@ -20,13 +20,11 @@ class DashScreen extends StatelessWidget {
       backgroundColor: AppColors.whiteColor,
       body: Stack(
         children: [
-          // Dynamic content based on role
           Obx(() {
             if (role == 'staff') {
-              return c.staffPages[c.currentIndex
-                  .value]; // Add staff-specific pages in controller
+              return c.staffPages[c.currentIndex.value];
             } else {
-              return c.pages[c.currentIndex.value]; // Default user pages
+              return c.pages[c.currentIndex.value];
             }
           }),
           Positioned(
@@ -111,7 +109,6 @@ class DashScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Animated container for the icon
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.all(10),
@@ -127,8 +124,6 @@ class DashScreen extends StatelessWidget {
                 height: 22,
               ),
             ),
-
-            // Label
             const SizedBox(height: 4),
             Text(
               label,

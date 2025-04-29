@@ -7,30 +7,24 @@ import 'package:get/get.dart';
 class SplashScreen extends StatelessWidget {
   final call = Get.put(SplashScreenController());
 
-  // Create a custom animation controller using GetX
   final RxDouble pulseValue = 1.0.obs;
   final RxDouble rotateValue = 0.0.obs;
   final RxDouble opacityValue = 0.0.obs;
   final RxDouble progressValue = 0.0.obs;
 
   SplashScreen({super.key}) {
-    // Start animations when the widget is created
     _startAnimations();
   }
 
   void _startAnimations() {
-    // Pulse animation
     _animatePulse();
 
-    // Rotation animation
     _animateRotation();
 
-    // Fade in animation
     Future.delayed(Duration(milliseconds: 300), () {
       opacityValue.value = 1.0;
     });
 
-    // Progress animation
     _animateProgress();
   }
 
@@ -39,7 +33,7 @@ class SplashScreen extends StatelessWidget {
       pulseValue.value = 1.1;
       Future.delayed(Duration(milliseconds: 1500), () {
         pulseValue.value = 1.0;
-        // Repeat the animation
+
         _animatePulse();
       });
     });
@@ -50,14 +44,12 @@ class SplashScreen extends StatelessWidget {
       rotateValue.value = 0.05;
       Future.delayed(Duration(milliseconds: 1500), () {
         rotateValue.value = 0.0;
-        // Repeat the animation
         _animateRotation();
       });
     });
   }
 
   void _animateProgress() {
-    // Animate progress from 0 to 1 over 3 seconds
     for (int i = 1; i <= 20; i++) {
       Future.delayed(Duration(milliseconds: i * 150), () {
         progressValue.value = i / 20;
@@ -71,16 +63,12 @@ class SplashScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Animated background
           _buildAnimatedBackground(context),
-
-          // Main content
           SafeArea(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Animated logo
                   Obx(() => Transform.rotate(
                         angle: rotateValue.value,
                         child: Transform.scale(
@@ -112,10 +100,7 @@ class SplashScreen extends StatelessWidget {
                           ),
                         ),
                       )),
-
                   SizedBox(height: 40),
-
-                  // Animated text with opacity
                   Obx(() => AnimatedOpacity(
                         opacity: opacityValue.value,
                         duration: Duration(milliseconds: 800),
@@ -128,10 +113,7 @@ class SplashScreen extends StatelessWidget {
                           ),
                         ),
                       )),
-
                   SizedBox(height: 30),
-
-                  // Custom animated progress indicator
                   Obx(() => Container(
                         width: 200,
                         height: 6,
@@ -157,10 +139,7 @@ class SplashScreen extends StatelessWidget {
                           ],
                         ),
                       )),
-
                   SizedBox(height: 40),
-
-                  // Animated dots (alternative to progress bar)
                   DotsLoadingIndicator(color: AppColors.primaryColor),
                 ],
               ),
@@ -188,7 +167,6 @@ class SplashScreen extends StatelessWidget {
           ),
         ),
 
-        // Animated circles
         Obx(() => Positioned(
               top: MediaQuery.of(context).size.height * 0.1,
               left: MediaQuery.of(context).size.width * 0.1,
@@ -242,7 +220,6 @@ class SplashScreen extends StatelessWidget {
   }
 }
 
-// Animated Dots Loading Indicator as a stateless widget
 class DotsLoadingIndicator extends StatelessWidget {
   final Color color;
 
@@ -251,14 +228,12 @@ class DotsLoadingIndicator extends StatelessWidget {
     required this.color,
   }) : super(key: key);
 
-  // Animation values using GetX
   final RxDouble dot1Size = 10.0.obs;
   final RxDouble dot2Size = 10.0.obs;
   final RxDouble dot3Size = 10.0.obs;
 
   @override
   Widget build(BuildContext context) {
-    // Start the animation when the widget is built
     _animateDots();
 
     return Row(
@@ -299,17 +274,14 @@ class DotsLoadingIndicator extends StatelessWidget {
   }
 
   void _animateDots() {
-    // Animate first dot
     Future.delayed(Duration(milliseconds: 0), () {
       _animateDot(dot1Size);
     });
 
-    // Animate second dot with delay
     Future.delayed(Duration(milliseconds: 180), () {
       _animateDot(dot2Size);
     });
 
-    // Animate third dot with delay
     Future.delayed(Duration(milliseconds: 360), () {
       _animateDot(dot3Size);
     });
@@ -326,7 +298,6 @@ class DotsLoadingIndicator extends StatelessWidget {
   }
 }
 
-// Custom AnimatedScale widget for stateless implementation
 class AnimatedScale extends StatelessWidget {
   final Widget child;
   final double scale;

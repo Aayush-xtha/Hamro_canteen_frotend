@@ -28,10 +28,6 @@ class MenuList extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // Category Tabs
-          _buildCategoryTabs(),
-
-          // Main Content
           Expanded(
             child: Obx(() {
               log("Food List: ${c.allFoods}");
@@ -43,63 +39,6 @@ class MenuList extends StatelessWidget {
             }),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryTabs() {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Obx(() {
-        if (c.loadings.value || c.allFoods.isEmpty) {
-          return const SizedBox.shrink();
-        }
-
-        return ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: c.allFoods.length + 1, // +1 for "All" tab
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return _buildCategoryTab("All", true);
-            }
-            final category = c.allFoods[index - 1].categoryName ?? "Category";
-            return _buildCategoryTab(category, false);
-          },
-        );
-      }),
-    );
-  }
-
-  Widget _buildCategoryTab(String name, bool isSelected) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: isSelected ? AppColors.primaryColor : Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isSelected ? AppColors.primaryColor : Colors.grey.shade300,
-          width: 1,
-        ),
-      ),
-      child: Center(
-        child: Text(
-          name,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black87,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
       ),
     );
   }
@@ -151,9 +90,7 @@ class MenuList extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            onPressed: () {
-              // c.fetchFoodDetails();
-            },
+            onPressed: () {},
             child: const Text("Refresh Menu"),
           ),
         ],
@@ -184,7 +121,6 @@ class EnhancedFoodCategoryWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Category Header
         Container(
           margin: const EdgeInsets.only(bottom: 16),
           child: Row(
@@ -225,8 +161,6 @@ class EnhancedFoodCategoryWidget extends StatelessWidget {
             ],
           ),
         ),
-
-        // Food Items Grid
         GridView.builder(
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
@@ -242,7 +176,6 @@ class EnhancedFoodCategoryWidget extends StatelessWidget {
             return EnhancedFoodItemCard(food: food);
           },
         ),
-
         const SizedBox(height: 16),
       ],
     );
@@ -316,7 +249,6 @@ class EnhancedFoodItemCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Veg/Non-veg Indicator
                 Positioned(
                   top: 8,
                   right: 8,
@@ -340,7 +272,6 @@ class EnhancedFoodItemCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Rating Badge (example)
                 Positioned(
                   bottom: 0,
                   left: 0,
@@ -376,13 +307,11 @@ class EnhancedFoodItemCard extends StatelessWidget {
               ],
             ),
 
-            // Food Details
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Food Name
                   Text(
                     food.foodName ?? "Unknown Food",
                     style: const TextStyle(
@@ -409,7 +338,7 @@ class EnhancedFoodItemCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "₹${food.price ?? "0.00"}",
+                        "Rs ${food.price ?? "0.00"}",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -440,7 +369,6 @@ class EnhancedFoodItemCard extends StatelessWidget {
   }
 }
 
-// Alternative List View Food Item
 class EnhancedFoodItemRow extends StatelessWidget {
   final Foods food;
 
@@ -467,7 +395,6 @@ class EnhancedFoodItemRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Food Image
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
@@ -477,7 +404,7 @@ class EnhancedFoodItemRow extends StatelessWidget {
                 height: 100,
                 width: 100,
                 fit: BoxFit.cover,
-                imageUrl: food.foodImage ?? "",
+                imageUrl: food.foodImage ?? "assets/images/blank_image.jpg",
                 placeholder: (context, url) => Container(
                   color: Colors.grey[200],
                   child: const Center(
@@ -502,15 +429,12 @@ class EnhancedFoodItemRow extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Food Details
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Food Name with Veg/Non-veg Indicator
                     Row(
                       children: [
                         Icon(
@@ -537,7 +461,6 @@ class EnhancedFoodItemRow extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    // Description
                     Text(
                       food.description ?? "No description available",
                       style: TextStyle(
@@ -548,12 +471,11 @@ class EnhancedFoodItemRow extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
-                    // Price and Rating
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "₹${food.price ?? "0.00"}",
+                          "Rs ${food.price ?? "0.00"}",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -584,8 +506,6 @@ class EnhancedFoodItemRow extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Add Button
             Container(
               height: 100,
               width: 40,
@@ -603,9 +523,7 @@ class EnhancedFoodItemRow extends StatelessWidget {
                     color: AppColors.primaryColor,
                     size: 28,
                   ),
-                  onPressed: () {
-                    // Add to cart functionality
-                  },
+                  onPressed: () {},
                 ),
               ),
             ),

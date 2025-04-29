@@ -18,10 +18,8 @@ class LoginScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Top curved background
           _buildTopBackground(size),
 
-          // Main content
           SafeArea(
             child: SingleChildScrollView(
               child: Padding(
@@ -31,22 +29,18 @@ class LoginScreen extends StatelessWidget {
                   children: [
                     SizedBox(height: size.height * 0.15),
 
-                    // Logo and welcome text
                     _buildHeader(),
 
                     SizedBox(height: size.height * 0.06),
 
-                    // Login form
                     _buildLoginForm(),
 
                     const SizedBox(height: 32),
 
-                    // Login button
                     _buildLoginButton(),
 
                     const SizedBox(height: 30),
 
-                    // Register link
                     _buildRegisterLink(),
 
                     const SizedBox(height: 20),

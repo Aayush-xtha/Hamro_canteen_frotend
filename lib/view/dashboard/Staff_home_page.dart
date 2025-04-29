@@ -9,7 +9,6 @@ import 'package:folder_structure/view/dashboard/edit_profile_screen.dart';
 
 class StaffHomePage extends StatelessWidget {
   final coreController = Get.put(CoreController());
-  // final historyController = Get.put(HistoryScreenController());
   final orderConfirmController = Get.put(StaffConfirmationController());
 
   StaffHomePage({super.key});
@@ -251,91 +250,4 @@ class StaffHomePage extends StatelessWidget {
       ),
     );
   }
-
-  // Obx(() {
-  //   final orders = historyController.allOrderHistory
-  //       .where((order) => order.orderStatus?.toLowerCase() == 'pending')
-  //       .toList();
-
-  //   if (orders.isEmpty) {
-  //     return const Center(child: Text("No pending orders."));
-  //   }
-
-  //   return ListView.builder(
-  //     itemCount: orders.length,
-  //     itemBuilder: (context, index) {
-  //       final order = orders[index];
-  //       final user = order.userDetails;
-  //       final item = order.items?.first;
-  //       return Container(
-  //         margin: const EdgeInsets.only(bottom: 12),
-  //         padding: const EdgeInsets.all(16),
-  //         decoration: BoxDecoration(
-  //           color: Colors.white,
-  //           borderRadius: BorderRadius.circular(12),
-  //           boxShadow: [
-  //             BoxShadow(
-  //               color: Colors.black.withOpacity(0.05),
-  //               blurRadius: 6,
-  //               offset: const Offset(0, 2),
-  //             ),
-  //           ],
-  //         ),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             Text("Username: ${user?.name ?? 'Unknown'}",
-  //                 style: const TextStyle(fontWeight: FontWeight.bold)),
-  //             const SizedBox(height: 4),
-  //             Text("Ordered Item: ${item?.foodName ?? '-'}"),
-  //             const SizedBox(height: 4),
-  //             Text("Total Price: Rs. ${order.totalAmount}"),
-  //             const SizedBox(height: 4),
-  //             Text("Status: ${order.orderStatus}",
-  //                 style: const TextStyle(color: Colors.orange)),
-  //             const SizedBox(height: 12),
-  //             Align(
-  //               alignment: Alignment.centerRight,
-  //               child: ElevatedButton(
-  //                 style: ElevatedButton.styleFrom(
-  //                   backgroundColor: AppColors.primaryColor,
-  //                 ),
-  //                 onPressed: () async {
-  //                   // final staffId = coreController.currentUser.value?.id;
-  //                   // final orderId = order.orderId;
-  //                   // final amount = order.totalAmount;
-
-  //                   // final response = await http.post(
-  //                   //   Uri.parse(Api.confirmOrderUrl),
-  //                   //   body: {
-  //                   //     'order_id': orderId ?? '',
-  //                   //     'staff_id': staffId ?? '',
-  //                   //     'payment_amount': amount ?? '',
-  //                   //   },
-  //                   // );
-
-  //                   // final res = response.body;
-  //                   // if (response.statusCode == 200 &&
-  //                   //     res.contains('success')) {
-  //                   //   CustomSnackBar.success(
-  //                   //       title: "Success", message: "Order confirmed!");
-  //                   //   historyController.getAllOrders();
-  //                   // } else {
-  //                   //   CustomSnackBar.error(
-  //                   //       title: "Error",
-  //                   //       message: "Failed to confirm order");
-  //                   // }
-  //                   orderConfirmController.confirmOrder(
-  //                       order.orderId.toString(),
-  //                       order.totalAmount.toString());
-  //                 },
-  //                 child: const Text("Confirm Order"),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }),
 }

@@ -38,9 +38,12 @@ class AddToCartPage extends StatelessWidget {
                         return CartItemCard(
                           item: item,
                           isSelected: c.selectedItems.contains(item.cartId),
-                          onToggleSelection: () => c.toggleSelection(item.cartId.toString()),
-                          onIncreaseQuantity: () => c.increaseQuantity(item.cartId.toString()),
-                          onDecreaseQuantity: () => c.decreaseQuantity(item.cartId.toString()),
+                          onToggleSelection: () =>
+                              c.toggleSelection(item.cartId.toString()),
+                          onIncreaseQuantity: () =>
+                              c.increaseQuantity(item.cartId.toString()),
+                          onDecreaseQuantity: () =>
+                              c.decreaseQuantity(item.cartId.toString()),
                           onRemove: () => c.removeItem(item.cartId.toString()),
                         );
                       },
@@ -49,10 +52,9 @@ class AddToCartPage extends StatelessWidget {
                 ],
               );
       }),
-      // Floating action button to proceed to checkout
       floatingActionButton: Obx(() {
         if (c.selectedItems.isEmpty) return const SizedBox.shrink();
-        
+
         return FloatingActionButton.extended(
           onPressed: () {
             _showCheckoutSheet(context);
@@ -190,7 +192,8 @@ class AddToCartPage extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: AppColors.primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -213,7 +216,7 @@ class AddToCartPage extends StatelessWidget {
     final selectedCartItems = c.allCartItems
         .where((item) => c.selectedItems.contains(item.cartId))
         .toList();
-        
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -241,7 +244,7 @@ class AddToCartPage extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               // Title
               Center(
                 child: Text(
@@ -254,7 +257,7 @@ class AddToCartPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              
+
               // Selected items summary
               Text(
                 "Selected Items (${selectedCartItems.length})",
@@ -264,57 +267,56 @@ class AddToCartPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              
-              // List of selected items (limited to 3 with "more" indicator)
+
               ...selectedCartItems
                   .take(3)
-                  .map((item) => 
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: CachedNetworkImage(
-                              imageUrl: item.foodImage ?? "",
-                              width: 40,
-                              height: 40,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
+                  .map((item) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: CachedNetworkImage(
+                                imageUrl: item.foodImage ?? "",
                                 width: 40,
                                 height: 40,
-                                color: Colors.grey[200],
-                                child: const Center(child: CircularProgressIndicator()),
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  width: 40,
+                                  height: 40,
+                                  color: Colors.grey[200],
+                                  child: const Center(
+                                      child: CircularProgressIndicator()),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  width: 40,
+                                  height: 40,
+                                  color: Colors.grey[200],
+                                  child: const Icon(Icons.fastfood,
+                                      color: Colors.grey, size: 20),
+                                ),
                               ),
-                              errorWidget: (context, url, error) => Container(
-                                width: 40,
-                                height: 40,
-                                color: Colors.grey[200],
-                                child: const Icon(Icons.fastfood, color: Colors.grey, size: 20),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                "${item.foodName} x${item.quantity}",
+                                style: const TextStyle(fontSize: 14),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              "${item.foodName} x${item.quantity}",
-                              style: const TextStyle(fontSize: 14),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            Text(
+                              "Rs ${(double.parse(item.unitPrice ?? "0") * int.parse(item.quantity ?? "1")).toStringAsFixed(2)}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "₹${(double.parse(item.unitPrice ?? "0") * int.parse(item.quantity ?? "1")).toStringAsFixed(2)}",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ).toList(),
-              
-              // Show "more items" if there are more than 3 selected items
+                          ],
+                        ),
+                      ))
+                  .toList(),
+
               if (selectedCartItems.length > 3)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
@@ -326,11 +328,11 @@ class AddToCartPage extends StatelessWidget {
                     ),
                   ),
                 ),
-              
+
               const SizedBox(height: 16),
               const Divider(),
               const SizedBox(height: 16),
-              
+
               // Total amount
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -343,7 +345,7 @@ class AddToCartPage extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "₹${c.selectedTotal.toStringAsFixed(2)}",
+                    "Rs ${c.selectedTotal.toStringAsFixed(2)}",
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -352,9 +354,9 @@ class AddToCartPage extends StatelessWidget {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Proceed to checkout button
               SizedBox(
                 width: double.infinity,
@@ -370,10 +372,10 @@ class AddToCartPage extends StatelessWidget {
                   onPressed: () {
                     Get.back(); // Close the bottom sheet
                     Get.to(() => OrderDetailScreen(
-                      selectedItems: selectedCartItems,
-                      totalAmount: c.selectedTotal,
-                      isFromCart: true,
-                    ));
+                          selectedItems: selectedCartItems,
+                          totalAmount: c.selectedTotal,
+                          isFromCart: true,
+                        ));
                   },
                   child: const Text(
                     "Proceed to Checkout",
@@ -413,7 +415,7 @@ class CartItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 15),
+      margin: const EdgeInsets.only(bottom: 10),
       child: Stack(
         children: [
           Card(
@@ -425,7 +427,10 @@ class CartItemCard extends StatelessWidget {
                 width: isSelected ? 2 : 0,
               ),
             ),
-            elevation: isSelected ? 4 : 1,
+            elevation: isSelected ? 2 : 1,
+            shadowColor: isSelected
+                ? AppColors.primaryColor.withOpacity(0.3)
+                : Colors.black.withOpacity(0.1),
             child: InkWell(
               onTap: onToggleSelection,
               borderRadius: BorderRadius.circular(16),
@@ -435,47 +440,91 @@ class CartItemCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Checkbox for selection
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8, right: 8),
-                      child: Theme(
-                        data: ThemeData(
-                          checkboxTheme: CheckboxThemeData(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
+                    Transform.scale(
+                      scale: 1.1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 8,
+                        ),
+                        child: Theme(
+                          data: ThemeData(
+                            checkboxTheme: CheckboxThemeData(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ),
+                          child: Checkbox(
+                            value: isSelected,
+                            onChanged: (_) => onToggleSelection(),
+                            activeColor: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Food image with gradient overlay when selected
+                    Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: CachedNetworkImage(
+                            imageUrl: item.foodImage ?? "",
+                            width: 70,
+                            height: 70,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              width: 80,
+                              height: 80,
+                              color: Colors.grey[200],
+                              child: const Center(
+                                  child: CircularProgressIndicator()),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              width: 80,
+                              height: 80,
+                              color: Colors.grey[300],
+                              child: const Icon(Icons.fastfood,
+                                  size: 40, color: Colors.orange),
                             ),
                           ),
                         ),
-                        child: Checkbox(
-                          value: isSelected,
-                          onChanged: (_) => onToggleSelection(),
-                          activeColor: AppColors.primaryColor,
-                        ),
-                      ),
-                    ),
-                    // Food image
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: CachedNetworkImage(
-                        imageUrl: item.foodImage ?? "",
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey[200],
-                          child: const Center(child: CircularProgressIndicator()),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          width: 80,
-                          height: 80,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.fastfood, size: 40, color: Colors.orange),
-                        ),
-                      ),
+                        if (isSelected)
+                          Positioned.fill(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    AppColors.primaryColor.withOpacity(0.0),
+                                    AppColors.primaryColor.withOpacity(0.2),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (isSelected)
+                          Positioned(
+                            bottom: 5,
+                            right: 5,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryColor,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 12,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                     const SizedBox(width: 16),
-                    // Food details
+
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -500,7 +549,6 @@ class CartItemCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 12),
-                          // Price and quantity controls
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -509,7 +557,7 @@ class CartItemCard extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "₹${item.unitPrice}",
+                                    "Rs ${item.unitPrice}",
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -518,7 +566,7 @@ class CartItemCard extends StatelessWidget {
                                   ),
                                   int.parse(item.quantity ?? "0") > 1
                                       ? Text(
-                                          "Total: ₹${(double.parse(item.unitPrice ?? "0") * int.parse(item.quantity ?? "1")).toStringAsFixed(2)}",
+                                          "Total: Rs ${(double.parse(item.unitPrice ?? "0") * int.parse(item.quantity ?? "1")).toStringAsFixed(2)}",
                                           style: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
@@ -533,8 +581,11 @@ class CartItemCard extends StatelessWidget {
                                   color: Colors.grey[100],
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: Colors.grey[300]!,
-                                    width: 1,
+                                    color: isSelected
+                                        ? AppColors.primaryColor
+                                            .withOpacity(0.3)
+                                        : Colors.grey[300]!,
+                                    width: isSelected ? 1.5 : 1,
                                   ),
                                 ),
                                 child: Row(
@@ -550,7 +601,9 @@ class CartItemCard extends StatelessWidget {
                                           padding: const EdgeInsets.all(6),
                                           child: Icon(
                                             Icons.remove,
-                                            color: int.parse(item.quantity ?? "0") > 1
+                                            color: int.parse(
+                                                        item.quantity ?? "0") >
+                                                    1
                                                 ? AppColors.primaryColor
                                                 : Colors.grey,
                                             size: 20,
@@ -560,12 +613,16 @@ class CartItemCard extends StatelessWidget {
                                     ),
                                     // Quantity display
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8),
                                       child: Text(
                                         item.quantity ?? "0",
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
+                                          color: isSelected
+                                              ? AppColors.primaryColor
+                                              : Colors.black87,
                                         ),
                                       ),
                                     ),
@@ -598,7 +655,6 @@ class CartItemCard extends StatelessWidget {
               ),
             ),
           ),
-          // Delete button positioned at top right
           Positioned(
             top: 0,
             right: 0,

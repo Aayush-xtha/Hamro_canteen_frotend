@@ -118,7 +118,7 @@ class ProfileScreen extends StatelessWidget {
                                 errorWidget: (context, url, error) => Container(
                                   color: Colors.grey[300],
                                   child: Image.asset(
-                                    "assets/images/blank_profile.jpg",
+                                    "assets/images/blank_profile.png",
                                     height: 100,
                                     width: 100,
                                     fit: BoxFit.cover,

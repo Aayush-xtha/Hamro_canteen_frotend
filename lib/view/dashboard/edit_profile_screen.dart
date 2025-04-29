@@ -118,7 +118,6 @@ class EditProfileScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // Save Changes Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -145,7 +144,6 @@ class EditProfileScreen extends StatelessWidget {
   }
 }
 
-// Custom TextField Widget
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String label;

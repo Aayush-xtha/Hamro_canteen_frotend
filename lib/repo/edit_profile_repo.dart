@@ -59,12 +59,12 @@ class EditProfileRepo {
         log("⚠️ No image provided.");
       }
 
-      log("🚀 Sending request...");
+      log(" Sending request...");
       http.StreamedResponse response =
           await HttpRequestHamroCanteen.multiPart(request);
 
       var responseData = await response.stream.bytesToString();
-      log("✅ Response received: $responseData");
+      log(" Response received: $responseData");
 
       var data = jsonDecode(responseData);
       log("📦 Parsed data: $data");
@@ -73,12 +73,12 @@ class EditProfileRepo {
         Users user = Users.fromJson(data["data"]);
         onSuccess(user);
       } else {
-        log("❌ API Error: ${data["message"]}");
+        log(" API Error: ${data["message"]}");
         onError(data["message"]);
       }
     } catch (e, s) {
-      log("❗ Exception: $e");
-      log("📜 StackTrace: $s");
+      log(" Exception: $e");
+      log(" StackTrace: $s");
       onError("Sorry, something went wrong");
     }
   }

@@ -48,7 +48,7 @@ class VegFoodCard extends StatelessWidget {
                       topRight: Radius.circular(16),
                     ),
                     child: Image.network(
-                      food.foodImage ?? "https://via.placeholder.com/400x200",
+                      food.foodImage ?? "assets/images/blank_image.jpg",
                       height: 180,
                       width: double.infinity,
                       fit: BoxFit.cover,
@@ -144,7 +144,7 @@ class VegFoodCard extends StatelessWidget {
                       children: [
                         // Price
                         Text(
-                          "₹${food.price ?? '0.00'}",
+                          "Rs ${food.price ?? '0.00'}",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

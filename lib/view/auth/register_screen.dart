@@ -19,50 +19,33 @@ class RegisterScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Top curved background
           _buildTopBackground(size),
-
-          // Main content
           SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Back button
                   Padding(
                     padding: const EdgeInsets.only(left: 16, top: 16),
                     child: _buildBackButton(),
                   ),
-
                   SizedBox(height: size.height * 0.08),
-
-                  // Header
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: _buildHeader(),
                   ),
-
                   const SizedBox(height: 30),
-
-                  // Registration form
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: _buildRegistrationForm(),
                   ),
-
                   const SizedBox(height: 30),
-
-                  // Register button
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: _buildRegisterButton(),
                   ),
-
                   const SizedBox(height: 24),
-
-                  // Login link
                   _buildLoginLink(),
-
                   const SizedBox(height: 40),
                 ],
               ),
@@ -364,11 +347,9 @@ class RegisterScreen extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // Account Information Section
           _buildSectionTitle("Account Information"),
           const SizedBox(height: 16),
 
-          // Password
           _buildInputLabel("Password"),
           const SizedBox(height: 8),
           Obx(() => _buildPasswordField(
@@ -382,7 +363,6 @@ class RegisterScreen extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          // Confirm Password
           _buildInputLabel("Confirm Password"),
           const SizedBox(height: 8),
           Obx(() => _buildPasswordField(
@@ -396,7 +376,6 @@ class RegisterScreen extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // Branch Information Section
           _buildSectionTitle("Branch Information"),
           const SizedBox(height: 16),
 
@@ -407,7 +386,6 @@ class RegisterScreen extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // Terms and Conditions
           Row(
             children: [
               SizedBox(
@@ -419,9 +397,7 @@ class RegisterScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  onChanged: (value) {
-                    // Handle terms acceptance
-                  },
+                  onChanged: (value) {},
                 ),
               ),
               const SizedBox(width: 12),

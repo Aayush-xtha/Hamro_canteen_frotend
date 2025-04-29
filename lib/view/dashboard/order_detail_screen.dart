@@ -116,7 +116,6 @@ class OrderDetailScreen extends StatelessWidget {
                   if (isFromCart &&
                       selectedItems != null &&
                       selectedItems!.isNotEmpty) {
-               
                     final quantities =
                         selectedItems!.map((item) => item.quantity).join(',');
                     final foodIds =
@@ -126,11 +125,8 @@ class OrderDetailScreen extends StatelessWidget {
                         .join(',');
 
                     Get.to(() => PaymentOptionScreen(
-                        quantity: quantities, price: prices, foodId: foodIds
-                        // Remove isFromCart parameter as it's not defined in PaymentOptionScreen
-                        ));
+                        quantity: quantities, price: prices, foodId: foodIds));
                   } else if (foods != null) {
-                    // Handle single item checkout
                     Get.to(() => PaymentOptionScreen(
                           quantity: quantity,
                           price: foods!.price.toString(),
@@ -154,10 +150,9 @@ class OrderDetailScreen extends StatelessWidget {
     );
   }
 
-  // Widget for displaying a single food item
   Widget _buildSingleFoodItem() {
     return Container(
-      width: Get.width - 32, // Fix overflow by setting explicit width
+      width: Get.width - 32,
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
@@ -173,7 +168,6 @@ class OrderDetailScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Product Image
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: CachedNetworkImage(
@@ -192,8 +186,6 @@ class OrderDetailScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 15),
-
-          // Product Details
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,7 +205,7 @@ class OrderDetailScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  "₹${foods?.price ?? 0}",
+                  "Rs ${foods?.price ?? 0}",
                   style: CustomTextStyles.f14W400(color: Colors.green),
                 ),
               ],
@@ -224,10 +216,9 @@ class OrderDetailScreen extends StatelessWidget {
     );
   }
 
-  // Widget for displaying multiple selected items
   Widget _buildSelectedItemsList() {
     return Container(
-      width: Get.width - 32, // Fix overflow by setting explicit width
+      width: Get.width - 32,
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
@@ -299,9 +290,9 @@ class OrderDetailScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Item price
+
                     Text(
-                      "₹${(double.parse(item.unitPrice ?? "0") * int.parse(item.quantity ?? "1")).toStringAsFixed(2)}",
+                      "Rs ${(double.parse(item.unitPrice ?? "0") * int.parse(item.quantity ?? "1")).toStringAsFixed(2)}",
                       style: CustomTextStyles.f14W600(color: Colors.green),
                     ),
                   ],
@@ -314,7 +305,6 @@ class OrderDetailScreen extends StatelessWidget {
     );
   }
 
-  // Widget for displaying order summary for a single item
   Widget _buildSingleItemOrderSummary() {
     return Column(
       children: [
@@ -335,7 +325,7 @@ class OrderDetailScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text("Rate", style: CustomTextStyles.f14W400()),
-            Text("₹${foods?.price ?? 0}", style: CustomTextStyles.f14W600()),
+            Text("Rs ${foods?.price ?? 0}", style: CustomTextStyles.f14W600()),
           ],
         ),
         const SizedBox(height: 5),
@@ -352,7 +342,7 @@ class OrderDetailScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text("Total Amount", style: CustomTextStyles.f16W600()),
-            Text("₹${calculatedTotalAmount.toStringAsFixed(2)}",
+            Text("Rs ${calculatedTotalAmount.toStringAsFixed(2)}",
                 style: CustomTextStyles.f16W600(color: Colors.green)),
           ],
         ),
@@ -360,7 +350,6 @@ class OrderDetailScreen extends StatelessWidget {
     );
   }
 
-  // Widget for displaying order summary for cart items
   Widget _buildCartOrderSummary() {
     return Column(
       children: [
@@ -385,7 +374,7 @@ class OrderDetailScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "₹${itemTotal.toStringAsFixed(2)}",
+                    "Rs ${itemTotal.toStringAsFixed(2)}",
                     style: CustomTextStyles.f14W600(),
                   ),
                 ],
@@ -398,7 +387,7 @@ class OrderDetailScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text("Total Amount", style: CustomTextStyles.f16W600()),
-            Text("₹${totalAmount.toStringAsFixed(2)}",
+            Text("Rs ${totalAmount.toStringAsFixed(2)}",
                 style: CustomTextStyles.f16W600(color: Colors.green)),
           ],
         ),

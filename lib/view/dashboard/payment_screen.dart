@@ -3,7 +3,6 @@ import 'package:folder_structure/controller/core_controller.dart';
 import 'package:folder_structure/controller/dashboard/menu_list_controller.dart';
 import 'package:folder_structure/function/esewa_function.dart';
 import 'package:folder_structure/utils/color.dart';
-import 'package:folder_structure/utils/custom_snackbar.dart';
 import 'package:folder_structure/utils/custom_text_styles.dart';
 import 'package:get/get.dart';
 

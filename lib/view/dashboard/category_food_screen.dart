@@ -100,7 +100,7 @@ class CategoryFoodScreen extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
-                    food.foodImage ?? "https://via.placeholder.com/80",
+                    food.foodImage ?? "assets/images/blank_image.jpg",
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
@@ -141,7 +141,6 @@ class CategoryFoodScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
 
-                          // Food name
                           Expanded(
                             child: Text(
                               food.foodName ?? "Food Item",
@@ -156,8 +155,6 @@ class CategoryFoodScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 4),
-
-                      // Description
                       Text(
                         food.description ?? "No description available",
                         style: TextStyle(
@@ -168,94 +165,15 @@ class CategoryFoodScreen extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 8),
-
-                      // Price and Add button
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "₹${food.price ?? '0'}",
+                            "Rs ${food.price ?? '0'}",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primaryColor,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              // // Add to cart
-                              // final foodId =
-                              //     int.tryParse(food.foodId ?? "0") ?? 0;
-
-                              // // Show loading indicator
-                              // final loadingOverlay = Get.dialog(
-                              //   const Center(
-                              //     child: CircularProgressIndicator(
-                              //       valueColor: AlwaysStoppedAnimation<Color>(
-                              //           AppColors.primaryColor),
-                              //     ),
-                              //   ),
-                              //   barrierDismissible: false,
-                              // );
-
-                              // cartController.addToCart(
-                              //   foodId: foodId,
-                              //   quantity: 1,
-                              //   onSuccess: (message) {
-                              //     // Close loading indicator
-                              //     Get.back();
-
-                              //     // Show success message
-                              //     Get.snackbar(
-                              //       "Added to Cart",
-                              //       message,
-                              //       snackPosition: SnackPosition.BOTTOM,
-                              //       backgroundColor: Colors.green,
-                              //       colorText: Colors.white,
-                              //       duration: const Duration(seconds: 2),
-                              //       animationDuration:
-                              //           const Duration(milliseconds: 500),
-                              //       isDismissible: true,
-                              //       margin: const EdgeInsets.all(8),
-                              //       icon: const Icon(Icons.check_circle,
-                              //           color: Colors.white),
-                              //     );
-                              //   },
-                              //   onError: (message) {
-                              //     // Close loading indicator
-                              //     Get.back();
-
-                              //     // Show error message
-                              //     Get.snackbar(
-                              //       "Error",
-                              //       message,
-                              //       snackPosition: SnackPosition.BOTTOM,
-                              //       backgroundColor: Colors.red,
-                              //       colorText: Colors.white,
-                              //       duration: const Duration(seconds: 3),
-                              //       isDismissible: true,
-                              //       margin: const EdgeInsets.all(8),
-                              //       icon: const Icon(Icons.error_outline,
-                              //           color: Colors.white),
-                              //     );
-                              //   },
-                              // );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryColor,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Text(
-                                "Add",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
                             ),
                           ),
                         ],

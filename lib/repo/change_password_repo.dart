@@ -22,7 +22,6 @@ class ChangePasswordRepo {
       var body = {
         "id": userId,
         "old_password": currentPassword,
-      
         "new_password": newPassword,
         "confirm_password": confirmPassword,
       };

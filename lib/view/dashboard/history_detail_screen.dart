@@ -59,7 +59,7 @@ class HistoryDetailScreen extends StatelessWidget {
                           _buildOrderDetailCard(
                             Icons.attach_money,
                             'Total Price',
-                            '₹${order.totalAmount ?? '0'}',
+                            'Rs ${order.totalAmount ?? '0'}',
                             color: Colors.teal,
                           ),
                           const SizedBox(height: 24),
@@ -68,8 +68,6 @@ class HistoryDetailScreen extends StatelessWidget {
                           _buildPaymentStatusSection(
                               order.orderStatus ?? 'N/A'),
                           const SizedBox(height: 24),
-                          // if ((order.orderStatus?.toLowerCase() ?? "") ==
-                          //         'pending'
                           if ((order.orderStatus?.toLowerCase() ?? "") ==
                               'pending')
                             Center(

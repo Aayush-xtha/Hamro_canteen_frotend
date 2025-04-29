@@ -31,7 +31,6 @@ class HomeScreen extends StatelessWidget {
                     style: CustomTextStyles.f16W600(),
                   )),
               actions: [
-                // Notification Icon with Badge
                 if (coreController.currentUser.value!.role == "user")
                   Stack(
                     alignment: Alignment.center,
@@ -45,8 +44,6 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
-                // Cart Icon with Badge
                 if (coreController.currentUser.value!.role == "user")
                   Stack(
                     alignment: Alignment.center,
@@ -60,23 +57,19 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
-                // Switch Branch Icon
                 Stack(
                   alignment: Alignment.center,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.sync_alt), // or Icons.swap_horiz
+                      icon: const Icon(Icons.sync_alt),
                       color: Colors.black87,
                       tooltip: "Switch Branch",
                       onPressed: () {
-                        Get.to(() =>
-                            SwitchBranchScreen()); // make sure this page exists
+                        Get.to(() => SwitchBranchScreen());
                       },
                     ),
                   ],
                 ),
-
                 const SizedBox(width: 8),
               ]),
           body: Obx(() {
@@ -197,7 +190,6 @@ class HomeScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // User Avatar
             CircleAvatar(
               radius: 30,
               backgroundColor: Colors.white,
@@ -211,7 +203,6 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            // User Info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,7 +244,6 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Edit Profile Button
             IconButton(
               icon: const Icon(Icons.edit_outlined, color: Colors.white),
               onPressed: () {
@@ -411,7 +401,7 @@ class HomeScreen extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
-                    food.foodImage ?? "https://via.placeholder.com/80",
+                    food.foodImage ?? "assets/images/blank_image.jpg",
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
@@ -428,14 +418,12 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 16),
 
-                // Food Details
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          // Veg/Non-veg indicator
                           Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
@@ -451,8 +439,6 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
-
-                          // Food name
                           Expanded(
                             child: Text(
                               food.foodName ?? "Food Item",
@@ -467,8 +453,6 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 4),
-
-                      // Description
                       Text(
                         food.description ?? "No description available",
                         style: TextStyle(
@@ -479,13 +463,11 @@ class HomeScreen extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 8),
-
-                      // Price and Add button
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "₹${food.price ?? '0'}",
+                            "Rs ${food.price ?? '0'}",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -525,18 +507,10 @@ class HomeScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Categories Section
         _buildCategoriesSection(),
-
-        // Veg Section
         _buildVegSection(),
-
-        // Most Sold Items Section
         _buildPopularSection(),
-
-        // Non-Veg Section
         _buildNonVegSection(),
-
         const SizedBox(height: 20),
       ],
     );
@@ -845,7 +819,7 @@ class HomeScreen extends StatelessWidget {
                       topRight: Radius.circular(16),
                     ),
                     child: Image.network(
-                      food.foodImage ?? "https://via.placeholder.com/400x200",
+                      food.foodImage ?? "assets/images/blank_image.jpg",
                       height: 180,
                       width: double.infinity,
                       fit: BoxFit.cover,

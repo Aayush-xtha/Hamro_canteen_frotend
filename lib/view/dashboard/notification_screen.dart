@@ -19,17 +19,14 @@ class NotificationScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Stack(
         children: [
-          // Top curved background
           _buildTopBackground(size),
 
-          // Main content
+          
           SafeArea(
             child: Column(
               children: [
-                // App bar with back button
                 _buildAppBar(),
 
-                // Notifications list
                 Expanded(
                   child: RefreshIndicator(
                     color: AppColors.primaryColor,
@@ -77,7 +74,6 @@ class NotificationScreen extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Decorative circles
             Positioned(
               top: 50,
               left: 20,
@@ -153,7 +149,7 @@ class NotificationScreen extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          const SizedBox(width: 48), // Balance the back button
+          const SizedBox(width: 48), 
         ],
       ),
     );
@@ -255,7 +251,6 @@ class EnhancedNotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Determine notification type and icon
     IconData notificationIcon;
     Color iconColor;
 
@@ -275,7 +270,6 @@ class EnhancedNotificationTile extends StatelessWidget {
       iconColor = AppColors.primaryColor;
     }
 
-    // Check if notification is recent (within last 24 hours)
     final isRecent = _isRecent(notification.createdAt);
 
     return Container(
@@ -300,7 +294,6 @@ class EnhancedNotificationTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
           onTap: () {
-            // Handle notification tap
           },
           borderRadius: BorderRadius.circular(20),
           child: Padding(
@@ -308,7 +301,6 @@ class EnhancedNotificationTile extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Notification icon
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
@@ -324,7 +316,6 @@ class EnhancedNotificationTile extends StatelessWidget {
 
                 const SizedBox(width: 16),
 
-                // Notification content
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,7 +323,6 @@ class EnhancedNotificationTile extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Time ago
                           Text(
                             _getTimeAgo(notification.createdAt),
                             style: TextStyle(
@@ -341,7 +331,6 @@ class EnhancedNotificationTile extends StatelessWidget {
                             ),
                           ),
 
-                          // New indicator
                           if (isRecent)
                             Container(
                               padding: const EdgeInsets.symmetric(
@@ -364,7 +353,7 @@ class EnhancedNotificationTile extends StatelessWidget {
 
                       const SizedBox(height: 8),
 
-                      // Message
+                      
                       Text(
                         notification.message ?? "No message",
                         style: const TextStyle(
@@ -376,7 +365,7 @@ class EnhancedNotificationTile extends StatelessWidget {
 
                       const SizedBox(height: 8),
 
-                      // Date
+                    
                       Text(
                         _formatDate(notification.createdAt),
                         style: TextStyle(

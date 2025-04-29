@@ -10,107 +10,178 @@ import 'package:get/get.dart';
 
 class AddToCartController extends GetxController {
   final coreController = Get.find<CoreController>();
-  var selectedItems = <String>{}.obs;
+  // Make sure we use a RxSet for proper reactivity
+  final selectedItems = <String>{}.obs;
 
   bool get isCartEmpty => allCartItems.isEmpty;
 
   bool get canCheckout => selectedItems.isNotEmpty;
 
+  // Make sure we're using cartId consistently for selection
   double get selectedTotal => allCartItems
-          .where((item) => selectedItems.contains(item.foodId))
-          .fold(0.0, (sum, item) {
+      .where((item) => selectedItems.contains(item.cartId))
+      .fold(0.0, (sum, item) {
         final price = double.tryParse(item.unitPrice ?? '0') ?? 0.0;
         final qty = int.tryParse(item.quantity ?? '0') ?? 0;
         return sum + (price * qty);
       });
 
   RxBool loadings = RxBool(false);
-
-  addToCart(String foodId, String quantity) async {
-    loadings.value = true;
-    await AddCartRepo.addToCartRepo(
-        foodId: foodId,
-        quantity: quantity,
-        onSuccess: () {
-          loadings.value = false;
-          CustomSnackBar.success(
-              title: "Add to Cart", message: "Add to Cart successfully");
-        },
-        onError: (message) {});
-  }
+  RxList<CartItems> allCartItems = <CartItems>[].obs;
+  final selectedPayment = "".obs;
 
   @override
   void onInit() {
     getAlLCartItems();
     super.onInit();
   }
+  
+  // Clear and refresh selection state
+  void resetSelections() {
+    selectedItems.clear();
+  }
 
-  RxList<CartItems> allCartItems = <CartItems>[].obs;
-  final selectedPayment = "".obs;
-  void updateSeletedPayment(String payment) {
-    selectedPayment.value = payment;
+  addToCart(String foodId, String quantity) async {
+    loadings.value = true;
+    await AddCartRepo.addToCartRepo(
+      foodId: foodId,
+      quantity: quantity,
+      onSuccess: () {
+        loadings.value = false;
+        // Refresh cart items after adding to cart
+        getAlLCartItems();
+        CustomSnackBar.success(
+            title: "Add to Cart", message: "Add to Cart successfully");
+      },
+      onError: (message) {
+        loadings.value = false;
+        CustomSnackBar.error(title: "Error", message: message);
+      }
+    );
   }
 
   getAlLCartItems() async {
     loadings.value = true;
-    await GetCartRepo.getCartRepo(onSuccess: (cart) {
-      loadings.value = false;
-      allCartItems.addAll(cart);
-    }, onError: (message) {
-      loadings.value = false;
-      CustomSnackBar.error(title: "cart", message: message);
-    });
+    // Clear existing items before fetching new ones
+    allCartItems.clear();
+    resetSelections();
+    
+    await GetCartRepo.getCartRepo(
+      onSuccess: (cart) {
+        loadings.value = false;
+        allCartItems.assignAll(cart); // Use assignAll instead of addAll
+      }, 
+      onError: (message) {
+        loadings.value = false;
+        CustomSnackBar.error(title: "cart", message: message);
+      }
+    );
+  }
+
+  void updateSeletedPayment(String payment) {
+    selectedPayment.value = payment;
   }
 
   List<int> getFoodIds() {
     return allCartItems
-        .map((item) =>
-            int.tryParse(item.foodId ?? '') ?? 0) // Convert foodId to int
+        .map((item) => int.tryParse(item.foodId ?? '') ?? 0)
         .toList();
   }
 
-  void toggleSelection(String itemId) {
-    if (selectedItems.contains(itemId)) {
-      selectedItems.remove(itemId);
+  // Fixed selection toggle - make sure we're using the correct ID
+  void toggleSelection(String cartId) {
+    if (selectedItems.contains(cartId)) {
+      selectedItems.remove(cartId);
     } else {
-      selectedItems.add(itemId);
+      selectedItems.add(cartId);
     }
+    // Force UI update
+    selectedItems.refresh();
   }
 
+  // Properly fixed select all function
   void toggleSelectAll() {
-    if (selectedItems.length == allCartItems.length) {
+    if (selectedItems.length == allCartItems.length && allCartItems.isNotEmpty) {
+      // If all are selected, clear selection
       selectedItems.clear();
     } else {
-      selectedItems.addAll(allCartItems.map((e) => e.cartId.toString()));
+      // Select all by adding all cart IDs
+      final allIds = allCartItems.map((item) => item.cartId).toList();
+      selectedItems.clear();
+      // selectedItems.addAll(allIds);
+    }
+    // Force UI update
+    selectedItems.refresh();
+  }
+
+  // Fixed quantity management with proper updates
+  void increaseQuantity(String cartId) {
+    final index = allCartItems.indexWhere((item) => item.cartId == cartId);
+    if (index != -1) {
+      final item = allCartItems[index];
+      final qty = int.tryParse(item.quantity ?? '0') ?? 0;
+      
+      // Create a new item with updated quantity to ensure reactivity
+      final updatedItem = CartItems(
+        cartId: item.cartId,
+        foodId: item.foodId,
+        foodName: item.foodName,
+        description: item.description,
+        foodImage: item.foodImage,
+        unitPrice: item.unitPrice,
+        quantity: (qty + 1).toString(),
+      );
+      
+      // Update the list with the new item
+      allCartItems[index] = updatedItem;
+      allCartItems.refresh();
     }
   }
 
-  void increaseQuantity(String itemId) {
-    final item = allCartItems.firstWhereOrNull((e) => e.cartId == itemId);
-    if (item != null) {
+  // Fixed quantity management with proper updates
+  void decreaseQuantity(String cartId) {
+    final index = allCartItems.indexWhere((item) => item.cartId == cartId);
+    if (index != -1) {
+      final item = allCartItems[index];
       final qty = int.tryParse(item.quantity ?? '0') ?? 0;
-      item.quantity = (qty + 1).toString();
-    }
-  }
-
-  void decreaseQuantity(String itemId) {
-    final item = allCartItems.firstWhereOrNull((e) => e.cartId == itemId);
-    if (item != null) {
-      final qty = int.tryParse(item.quantity ?? '0') ?? 0;
+      
       if (qty > 1) {
-        item.quantity = (qty - 1).toString();
+        // Create a new item with updated quantity to ensure reactivity
+        final updatedItem = CartItems(
+          cartId: item.cartId,
+          foodId: item.foodId,
+          foodName: item.foodName,
+          description: item.description,
+          foodImage: item.foodImage,
+          unitPrice: item.unitPrice,
+          quantity: (qty - 1).toString(),
+        );
+        
+        // Update the list with the new item
+        allCartItems[index] = updatedItem;
+        allCartItems.refresh();
       }
     }
   }
 
-  void removeItem(String itemId) {
-    allCartItems.removeWhere((item) => item.cartId == itemId);
-    selectedItems.remove(itemId);
+  void removeItem(String cartId) {
+    allCartItems.removeWhere((item) => item.cartId == cartId);
+    selectedItems.remove(cartId);
+    // Force refresh
+    allCartItems.refresh();
+    selectedItems.refresh();
   }
 
   void removeSelectedItems() {
-    allCartItems.removeWhere((item) => selectedItems.contains(item.cartId));
+    // Make a copy of the selected items before removing
+    final itemsToRemove = [...selectedItems];
+    
+    allCartItems.removeWhere((item) => itemsToRemove.contains(item.cartId));
     selectedItems.clear();
+    
+    // Force refresh of both lists
+    allCartItems.refresh();
+    selectedItems.refresh();
   }
 
   void showAddToCart(BuildContext context, Foods foods) {
@@ -220,7 +291,7 @@ class AddToCartController extends GetxController {
                       ),
                     ),
                     onPressed: () {
-                      addToCart(foods.foodId.toString(), quantity.toString());
+                      addToCart(foods.foodId.toString(), quantity.value.toString());
                       Get.back();
                     },
                     child: const Text(

@@ -28,7 +28,7 @@ class FoodDescriptionScreen extends StatelessWidget {
                 children: [
                   // Food Image
                   Image.network(
-                    food.foodImage ?? "",
+                    food.foodImage ?? "assets/images/blank_image.jpg",
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) {
@@ -58,7 +58,6 @@ class FoodDescriptionScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Gradient overlay for better text visibility
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -106,7 +105,7 @@ class FoodDescriptionScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
-                                "₹${food.price ?? "0.00"}",
+                                "Rs ${food.price ?? "0.00"}",
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -158,31 +157,14 @@ class FoodDescriptionScreen extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
               ),
             ),
-            // actions: [
-            //   Container(
-            //     margin: const EdgeInsets.all(8),
-            //     decoration: BoxDecoration(
-            //       color: Colors.white.withOpacity(0.8),
-            //       shape: BoxShape.circle,
-            //     ),
-            //     child: IconButton(
-            //       icon: const Icon(Icons.favorite_border, color: Colors.red),
-            //       onPressed: () {
-            //         // Add to favorites functionality
-            //       },
-            //     ),
-            //   ),
-            // ],
           ),
 
-          // Content
           SliverToBoxAdapter(
             child: Container(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Description Section
                   _buildSectionTitle("Description"),
                   const SizedBox(height: 12),
                   Text(
@@ -194,18 +176,12 @@ class FoodDescriptionScreen extends StatelessWidget {
                     ),
                     textAlign: TextAlign.justify,
                   ),
-
-                  const SizedBox(height: 24),
-
-                  const SizedBox(height: 60), // Space for bottom buttons
                 ],
               ),
             ),
           ),
         ],
       ),
-
-      // Bottom Action Buttons
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
@@ -220,7 +196,6 @@ class FoodDescriptionScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Price display
             Expanded(
               flex: 2,
               child: Column(
@@ -235,7 +210,7 @@ class FoodDescriptionScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "₹${food.price ?? "0.00"}",
+                    "Rs ${food.price ?? "0.00"}",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -245,8 +220,6 @@ class FoodDescriptionScreen extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Order button
             Expanded(
               flex: 3,
               child: ElevatedButton(
@@ -270,10 +243,7 @@ class FoodDescriptionScreen extends StatelessWidget {
                 ),
               ),
             ),
-
             const SizedBox(width: 12),
-
-            // Add to cart button
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey[100],
@@ -399,7 +369,6 @@ class FoodDescriptionScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // Food item summary
                   Row(
                     children: [
                       ClipRRect(
@@ -435,7 +404,7 @@ class FoodDescriptionScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              "₹$productPrice per item",
+                              "Rs $productPrice per item",
                               style: TextStyle(
                                 fontSize: 14,
                                 color: AppColors.primaryColor,
@@ -539,7 +508,7 @@ class FoodDescriptionScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "₹$productPrice",
+                              "Rs $productPrice",
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -581,7 +550,7 @@ class FoodDescriptionScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  "₹${(double.parse(productPrice) * quantity.value).toStringAsFixed(2)}",
+                                  "Rs ${(double.parse(productPrice) * quantity.value).toStringAsFixed(2)}",
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
